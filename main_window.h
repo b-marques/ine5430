@@ -10,13 +10,22 @@ public:
   MainWindow();
   ~MainWindow();
 
-protected:
+private:  
+  //GUI Building
+  void load_grid();
+  void load_box_layout();
+  void load_buttons();
+
   //Signal handlers:
   void on_button_clicked(Gtk::Button* clicked_button);
 
   //Member widgets:
   Gtk::Button* btn_restart;
   Gtk::Button* btn_human_vs_human;
+  Gtk::Button* btn_human_vs_computer;
+  Gtk::Button* btn_computer_vs_computer;
+  Gtk::Box* v_box;
+  Gtk::Box* h_box;
   Gtk::Grid* grid;
   Gtk::Button* btn_grid[15][15];
 };

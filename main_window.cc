@@ -4,6 +4,42 @@
 
 MainWindow::MainWindow()
 {
+  load_grid();
+  load_box_layout();
+
+  set_border_width(15);
+
+  add(*v_box);
+
+}
+
+MainWindow::~MainWindow()
+{
+  delete btn_restart;
+  delete btn_human_vs_human;
+  delete btn_human_vs_computer;
+  delete btn_computer_vs_computer;
+  for (int i = 0; i < 15; ++i)
+  {
+    for (int j = 0; j < 15; ++j)
+    {
+      delete btn_grid[i][j];
+    }
+  }
+  delete grid;
+  delete h_box;
+  delete v_box;
+  
+  
+}
+
+void MainWindow::on_button_clicked(Gtk::Button* clicked_button)
+{
+  clicked_button -> set_label("O");
+}
+
+void MainWindow::load_grid()
+{
   grid = Gtk::manage(new Gtk::Grid());
 
   std::string cell;
@@ -34,20 +70,36 @@ MainWindow::MainWindow()
     }
   }
 
-
-  set_border_width(10);
   grid->show();
-
-  add(*grid);
-
 }
 
-MainWindow::~MainWindow()
+void MainWindow::load_box_layout()
 {
+  v_box = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL, 8));
+  v_box -> pack_start(*grid);
+
+  h_box = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_HORIZONTAL, 4));
+
+  load_buttons();
+
+  h_box -> show();
+
+  v_box -> pack_start(*h_box);
+  v_box -> show();
 }
 
-void MainWindow::on_button_clicked(Gtk::Button* clicked_button)
+void MainWindow::load_buttons()
 {
-
-  clicked_button -> set_label("O");
+  btn_restart = Gtk::manage(new Gtk::Button("Restart"));
+  btn_restart -> show();
+  btn_human_vs_human = Gtk::manage(new Gtk::Button("vs Human"));
+  btn_human_vs_human -> show();
+  btn_human_vs_computer = Gtk::manage(new Gtk::Button("vs IA"));
+  btn_human_vs_computer -> show();
+  btn_computer_vs_computer = Gtk::manage(new Gtk::Button("IA vs IA"));
+  btn_computer_vs_computer -> show();
+  h_box -> pack_start(*btn_restart);
+  h_box -> pack_start(*btn_human_vs_human);
+  h_box -> pack_start(*btn_human_vs_computer);
+  h_box -> pack_start(*btn_computer_vs_computer);
 }
