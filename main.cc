@@ -1,56 +1,12 @@
+#include "main_window.h"
 #include <gtkmm.h>
 
-Gtk::Dialog* pDialog = nullptr;
-
-static
-void on_button_clicked()
+int main (int argc, char *argv[])
 {
-  if(pDialog)
-    pDialog->hide(); //hide() will cause main::run() to end.
-}
-
-int main (int argc, char **argv)
-{
-  auto app = Gtk::Application::create(argc, argv, "gomoku.ine5430");
-
-  //Load the GtkBuilder file and instantiate its widgets:
-  auto refBuilder = Gtk::Builder::create();
-  try
-  {
-    refBuilder->add_from_file("gui.glade");
-  }
-  catch(const Glib::FileError& ex)
-  {
-    std::cerr << "FileError: " << ex.what() << std::endl;
-    return 1;
-  }
-  catch(const Glib::MarkupError& ex)
-  {
-    std::cerr << "MarkupError: " << ex.what() << std::endl;
-    return 1;
-  }
-  catch(const Gtk::BuilderError& ex)
-  {
-    std::cerr << "BuilderError: " << ex.what() << std::endl;
-    return 1;
-  }
-
-  //Get the GtkBuilder-instantiated Dialog:
-  refBuilder->get_widget("DialogBasic", pDialog);
-  if(pDialog)
-  {
-    //Get the GtkBuilder-instantiated Button, and connect a signal handler:
-    Gtk::Button* pButton = nullptr;
-    refBuilder->get_widget("quit_button", pButton);
-    if(pButton)
-    {
-      pButton->signal_clicked().connect( sigc::ptr_fun(on_button_clicked) );
-    }
-
-    app->run(*pDialog);
-  }
-
-  delete pDialog;
-
-  return 0;
+  auto app = Gtk::Application::create(argc, argv, "ine5430.gomoku");
+  
+  MainWindow main_window;
+ 
+  //Shows the window and returns   when it is closed.
+  return app->run(main_window);
 }

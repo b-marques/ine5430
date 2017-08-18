@@ -1,22 +1,24 @@
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
+
 #include <gtkmm.h>
 
-#ifndef MAIN_WINDOW_H
-#define MAIN_WINDOW_H
-
-class MainWindow : public Gtk::Window{
-protected:
-    Glib::RefPtr<Gtk::Builder> builder;
-    Gtk::Button *btn_ok;
-    Gtk::Button *btn_cancel;
-    Gtk::Label  *lbl_hw;
+class MainWindow : public Gtk::Window
+{
 
 public:
-    MainWindow();//constructor
+  MainWindow();
+  ~MainWindow();
 
 protected:
-    //signal handlers
-    void on_ok_button_clicked();
-    void on_cancel_button_clicked();
+  //Signal handlers:
+  void on_button_clicked(Gtk::Button* clicked_button);
+
+  //Member widgets:
+  Gtk::Button* btn_restart;
+  Gtk::Button* btn_human_vs_human;
+  Gtk::Grid* grid;
+  Gtk::Button* btn_grid[15][15];
 };
 
-#endif //MAIN_WINDOW_H
+#endif // MAINWINDOW_H

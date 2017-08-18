@@ -1,26 +1,53 @@
 #include "main_window.h"
+#include <iostream>
+#include <string>
 
-using namespace Gtk;
+MainWindow::MainWindow()
+{
+  grid = Gtk::manage(new Gtk::Grid());
 
-MainWindow::MainWindow(const Glib::RefPtr<Gtk::Builder>& refGlade, BaseObjectType* cobject) :
-    Gtk::Window(cobject), builder(refGlade){
+  std::string cell;
+  for (int i = 0; i < 15; ++i) {
+    if(i){
+      cell = std::to_string(i) + "," + "0";
+      btn_grid[i][0] = Gtk::manage(new Gtk::Button(cell));
+      btn_grid[i][0] -> signal_clicked().connect(sigc::bind<Gtk::Button*>(sigc::mem_fun(*this, &MainWindow::on_button_clicked), btn_grid[i][0]));
 
-    builder->get_widget("btn_ok", btnOk);
-    builder->get_widget("btn_cancel", btnCancel);
-    builder->get_widget("lbl_hw",lblNotice);
+      grid -> attach_next_to(*btn_grid[i][0], *btn_grid[i-1][0], Gtk::POS_BOTTOM, 1, 1);
+      btn_grid[i][0] -> show();
+    } else {
+      cell = std::to_string(i) + "," + "0";
+      btn_grid[i][0] = Gtk::manage(new Gtk::Button(cell));
+      btn_grid[i][0] -> signal_clicked().connect(sigc::bind<Gtk::Button*>(
+              sigc::mem_fun(*this, &MainWindow::on_button_clicked), btn_grid[i][0]));
+      grid -> attach_next_to(*btn_grid[i][0], Gtk::POS_RIGHT, 1, 1);
+      btn_grid[i][0] -> show();
+    }
+    for (int j = 0; j < 15; ++j) {
+      if(j) {
+        cell = std::to_string(i) + "," + std::to_string(j);
+        btn_grid[i][j] = Gtk::manage(new Gtk::Button(cell));
+        btn_grid[i][j] -> signal_clicked().connect(sigc::bind<Gtk::Button*>(sigc::mem_fun(*this, &MainWindow::on_button_clicked), btn_grid[i][j]));
+        grid -> attach_next_to(*btn_grid[i][j],*btn_grid[i][j-1], Gtk::POS_RIGHT, 1, 1);
+        btn_grid[i][j] -> show();
+      }
+    }
+  }
 
-    btnOk->signal_clicked()
-    	.connect(sigc::mem_fun(*this, &MainWindow::on_ok_button_clicked));
-    btnCancel->signal_clicked()
-    	.connect(sigc::mem_fun(*this, &MainWindow::on_cancel_button_clicked));
+
+  set_border_width(10);
+  grid->show();
+
+  add(*grid);
 
 }
 
-
-void MainWindow::on_ok_button_clicked(){
-    lbl_hw->set_text("Ok clicked!");
+MainWindow::~MainWindow()
+{
 }
 
-void MainWindow::on_cancel_button_clicked(){
-    lbl_hw->set_text("Cancel clicked!");
+void MainWindow::on_button_clicked(Gtk::Button* clicked_button)
+{
+
+  clicked_button -> set_label("O");
 }
