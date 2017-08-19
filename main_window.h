@@ -9,6 +9,7 @@ class MainWindow : public Gtk::Window
 public:
   MainWindow();
   ~MainWindow();
+  const static int GRID_SIZE = 15;
 
 private:  
   //GUI Building
@@ -17,7 +18,8 @@ private:
   void load_buttons();
 
   //Signal handlers:
-  void on_button_clicked(Gtk::Button* clicked_button);
+  void on_grid_button_clicked(Gtk::Button* clicked_button);
+  void on_restart_button_clicked(Gtk::Button* clicked_button);
 
   //Member widgets:
   Gtk::Button* btn_restart;

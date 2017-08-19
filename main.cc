@@ -1,5 +1,8 @@
 #include "main_window.h"
 #include <gtkmm.h>
+#include <set>
+#include <iterator>
+#include <iostream>
 
 int main (int argc, char *argv[])
 {
