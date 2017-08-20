@@ -2,23 +2,38 @@
 #define GOMOKU_CORE_H
 
 #include <gtkmm.h>
-#include <unordered_set>
-#include <iterator>
-#include "gomoku_play.h"
+#include "gomoku_player.h"
+
+enum GameState {
+  NEW_GAME = 0,
+  IN_GAME,
+  END_GAME,
+};
+
+enum PlayerTurn {
+  P1 = 0,
+  P2 = 1,
+};
 
 class GomokuCore
 {
 public:
-  GomokuCore();
-  ~GomokuCore();
+  static GomokuCore* instance();
+  ~GomokuCore();  
+
   void restart();
+  void change_turn();
+  bool compute_play(int x, int y);
   GomokuPlay find_squares();
+  PlayerTurn player_turn();
 
 private:
-  int grid[15][15];
-  int player;
-  std::unordered_set <GomokuPlay> p0_plays;
-  std::unordered_set <GomokuPlay> p1_plays;
+  GomokuCore();
+  static GomokuCore* _instance;
+  int _grid[15][15];
+  PlayerTurn _player_turn;
+  GameState _game_state;
+  GomokuPlayer _player[2];
 };
 
 #endif // GOMOKU_CORE_H
