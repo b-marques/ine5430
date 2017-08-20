@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <gtkmm.h>
+#include "gomoku_core.h"
 
 class MainWindow : public Gtk::Window
 {
@@ -18,8 +19,11 @@ private:
   void load_buttons();
 
   //Signal handlers:
-  void on_grid_button_clicked(Gtk::Button* clicked_button);
+  void on_grid_button_clicked(int x, int y, Gtk::Button* clicked_button);
   void on_restart_button_clicked(Gtk::Button* clicked_button);
+
+  // Game control
+  GomokuCore* gomoku_core;
 
   //Member widgets:
   Gtk::Button* btn_restart;
@@ -29,7 +33,7 @@ private:
   Gtk::Box* v_box;
   Gtk::Box* h_box;
   Gtk::Grid* grid;
-  Gtk::Button* btn_grid[15][15];
+  Gtk::Button* btn_grid[GRID_SIZE][GRID_SIZE];
 };
 
 #endif // MAINWINDOW_H

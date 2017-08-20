@@ -1,6 +1,7 @@
-#include "main_window.h"
 #include <iostream>
 #include <string>
+#include "main_window.h"
+#include "gomoku_core.h"
 
 MainWindow::MainWindow()
 {
@@ -8,9 +9,10 @@ MainWindow::MainWindow()
   load_box_layout();
 
   set_border_width(16);
-
   add(*v_box);
+  // set_resizable(false);
 
+  gomoku_core = GomokuCore::instance();
 }
 
 MainWindow::~MainWindow()
@@ -33,9 +35,16 @@ MainWindow::~MainWindow()
   
 }
 
-void MainWindow::on_grid_button_clicked(Gtk::Button* clicked_button)
-{
-  clicked_button -> set_label("O");
+void MainWindow::on_grid_button_clicked(int x, int y, Gtk::Button* clicked_button)
+{ 
+  if(gomoku_core -> compute_play(x,y)) {
+
+    std::string label = (gomoku_core -> player_turn() == P1) ? "O" : "X";
+    clicked_button -> set_label(label);
+
+    gomoku_core -> change_turn();
+  }
+
 }
 
 void MainWindow::on_restart_button_clicked(Gtk::Button* clicked_button)
@@ -56,20 +65,26 @@ void MainWindow::load_grid()
   std::string label;
   for (auto i = 0; i < GRID_SIZE; ++i) {
     if(i){
-      label = std::to_string(i) + "," + "0";
+      label = "    "; //std::to_string(i) + "," + "0";
       btn_grid[i][0] = Gtk::manage(new Gtk::Button(label));
-      btn_grid[i][0] -> signal_clicked().connect(sigc::bind<Gtk::Button*>(
-            sigc::mem_fun(*this, &MainWindow::on_grid_button_clicked), btn_grid[i][0]));
+      btn_grid[i][0] -> signal_clicked().connect(
+        sigc::bind<int>(
+        sigc::bind<int>(
+        sigc::bind<Gtk::Button*>(
+        sigc::mem_fun(*this, &MainWindow::on_grid_button_clicked), btn_grid[i][0]),0),i));
       btn_grid[i][0] -> set_hexpand(true);
       btn_grid[i][0] -> set_vexpand(true);
 
       grid -> attach_next_to(*btn_grid[i][0], *btn_grid[i-1][0], Gtk::POS_BOTTOM, 1, 1);
       btn_grid[i][0] -> show();
     } else {
-      label = std::to_string(i) + "," + "0";
+      label = "    "; //std::to_string(i) + "," + "0";
       btn_grid[i][0] = Gtk::manage(new Gtk::Button(label));
-      btn_grid[i][0] -> signal_clicked().connect(sigc::bind<Gtk::Button*>(
-            sigc::mem_fun(*this, &MainWindow::on_grid_button_clicked), btn_grid[i][0]));
+      btn_grid[i][0] -> signal_clicked().connect(
+        sigc::bind<int>(
+        sigc::bind<int>(
+        sigc::bind<Gtk::Button*>(
+        sigc::mem_fun(*this, &MainWindow::on_grid_button_clicked), btn_grid[i][0]),0),i));
       btn_grid[i][0] -> set_hexpand(true);
       btn_grid[i][0] -> set_vexpand(true);
       grid -> attach_next_to(*btn_grid[i][0], Gtk::POS_RIGHT, 1, 1);
@@ -77,10 +92,13 @@ void MainWindow::load_grid()
     }
     for (auto j = 0; j < GRID_SIZE; ++j) {
       if(j) {
-        label = std::to_string(i) + "," + std::to_string(j);
+        label = "    "; //std::to_string(i) + "," + std::to_string(j);
         btn_grid[i][j] = Gtk::manage(new Gtk::Button(label));
-        btn_grid[i][j] -> signal_clicked().connect(sigc::bind<Gtk::Button*>(
-              sigc::mem_fun(*this, &MainWindow::on_grid_button_clicked), btn_grid[i][j]));
+        btn_grid[i][j] -> signal_clicked().connect(
+          sigc::bind<int>(
+          sigc::bind<int>(
+          sigc::bind<Gtk::Button*>(
+          sigc::mem_fun(*this, &MainWindow::on_grid_button_clicked), btn_grid[i][j]),j),i));
         btn_grid[i][j] -> set_hexpand(true);
         btn_grid[i][j] -> set_vexpand(true);
         grid -> attach_next_to(*btn_grid[i][j],*btn_grid[i][j-1], Gtk::POS_RIGHT, 1, 1);
