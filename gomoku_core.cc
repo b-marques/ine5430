@@ -1,5 +1,4 @@
 #include "gomoku_core.h"
-#include <iostream>
 
 GomokuCore* GomokuCore::_instance = nullptr;
 
@@ -40,7 +39,6 @@ void GomokuCore::change_turn()
   }
 
   _player_turn = _player_turn == P1 ? P2 : P1;
-  std::cout << "Player Turn: " << _player_turn << std::endl;
 }
 
 bool GomokuCore::compute_play(int x, int y)
@@ -50,6 +48,15 @@ bool GomokuCore::compute_play(int x, int y)
 
   _player[_player_turn].play(x, y);
   return true;
+}
+
+bool GomokuCore::have_winner()
+{
+  // if(victory_condition) {
+  //   _game_state = END_GAME;
+  //   return true;
+  // }
+  return false;
 }
 
 GomokuPlay GomokuCore::find_squares()

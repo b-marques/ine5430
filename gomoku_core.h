@@ -1,7 +1,6 @@
 #ifndef GOMOKU_CORE_H
 #define GOMOKU_CORE_H
 
-#include <gtkmm.h>
 #include "gomoku_player.h"
 
 enum GameState {
@@ -24,6 +23,7 @@ public:
   void restart();
   void change_turn();
   bool compute_play(int x, int y);
+  bool have_winner();
   GomokuPlay find_squares();
   PlayerTurn player_turn();
   GameState game_state();

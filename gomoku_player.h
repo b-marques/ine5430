@@ -2,7 +2,6 @@
 #define GOMOKU_PLAYER_H
 
 #include <unordered_set>
-#include <iterator>
 #include "gomoku_play.h"
 
 

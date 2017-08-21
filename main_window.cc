@@ -1,18 +1,16 @@
 #include <iostream>
 #include <string>
 #include "main_window.h"
-#include "gomoku_core.h"
 
 MainWindow::MainWindow()
 {
+  gomoku_core = GomokuCore::instance();
   load_grid();
   load_box_layout();
 
   set_border_width(16);
   add(*v_box);
   // set_resizable(false);
-
-  gomoku_core = GomokuCore::instance();
 }
 
 MainWindow::~MainWindow()
@@ -41,12 +39,17 @@ void MainWindow::on_grid_button_clicked(int x, int y, Gtk::Button* clicked_butto
     return;
   }
 
-  if(gomoku_core -> compute_play(x,y)) {
+  if(gomoku_core -> compute_play(x,y)) {   
+    if(gomoku_core -> have_winner()){
+      lbl_info -> set_label("Player " + std::to_string(gomoku_core -> player_turn() + 1) + " wins");
+      return;
+    }
 
     std::string label = (gomoku_core -> player_turn() == P1) ? "O" : "X";
     clicked_button -> set_label(label);
 
     gomoku_core -> change_turn();
+    lbl_info -> set_label("Player " + std::to_string(gomoku_core -> player_turn() + 1) + " turn");
   }
 
 }
@@ -54,6 +57,7 @@ void MainWindow::on_grid_button_clicked(int x, int y, Gtk::Button* clicked_butto
 void MainWindow::on_restart_button_clicked(Gtk::Button* clicked_button)
 {
   gomoku_core -> restart();
+  lbl_info -> set_label("Player " + std::to_string(gomoku_core -> player_turn() + 1) + " turn");
 
   std::string label;
   for(auto i = 0; i < GRID_SIZE; ++i){
@@ -156,4 +160,8 @@ void MainWindow::load_buttons()
   // h_box -> pack_start(*btn_human_vs_human);
   // h_box -> pack_start(*btn_human_vs_computer);
   // h_box -> pack_start(*btn_computer_vs_computer);
+
+  lbl_info = Gtk::manage(new Gtk::Label("Player " + std::to_string(gomoku_core -> player_turn() + 1) + " turn"));
+  lbl_info -> show();
+  h_box -> pack_start(*lbl_info);
 }

@@ -30,6 +30,7 @@ private:
   Gtk::Button* btn_human_vs_human;
   Gtk::Button* btn_human_vs_computer;
   Gtk::Button* btn_computer_vs_computer;
+  Gtk::Label* lbl_info;
   Gtk::Box* v_box;
   Gtk::Box* h_box;
   Gtk::Grid* grid;
