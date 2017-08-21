@@ -35,17 +35,19 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_grid_button_clicked(int x, int y, Gtk::Button* clicked_button)
 { 
+  std::string label;
   if(gomoku_core -> game_state() == END_GAME) {
     return;
   }
 
   if(gomoku_core -> compute_play(x,y)) {   
-    if(gomoku_core -> have_winner()){
+    if(gomoku_core -> have_winner(x, y)){
       lbl_info -> set_label("Player " + std::to_string(gomoku_core -> player_turn() + 1) + " wins");
+      label = (gomoku_core -> player_turn() == P1) ? "O" : "X";
+      clicked_button -> set_label(label);
       return;
     }
-
-    std::string label = (gomoku_core -> player_turn() == P1) ? "O" : "X";
+    label = (gomoku_core -> player_turn() == P1) ? "O" : "X";
     clicked_button -> set_label(label);
 
     gomoku_core -> change_turn();
