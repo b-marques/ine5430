@@ -26,3 +26,8 @@ std::unordered_set<GomokuPlay> GomokuPlayer::plays()
 {
   return _plays;
 }
+
+void GomokuPlayer::clear_plays()
+{
+  _plays.clear();
+}

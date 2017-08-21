@@ -37,6 +37,10 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_grid_button_clicked(int x, int y, Gtk::Button* clicked_button)
 { 
+  if(gomoku_core -> game_state() == END_GAME) {
+    return;
+  }
+
   if(gomoku_core -> compute_play(x,y)) {
 
     std::string label = (gomoku_core -> player_turn() == P1) ? "O" : "X";
@@ -49,13 +53,17 @@ void MainWindow::on_grid_button_clicked(int x, int y, Gtk::Button* clicked_butto
 
 void MainWindow::on_restart_button_clicked(Gtk::Button* clicked_button)
 {
+  gomoku_core -> restart();
+
   std::string label;
   for(auto i = 0; i < GRID_SIZE; ++i){
     for(auto j = 0; j < GRID_SIZE; ++j){
-      label = std::to_string(i) + "," + std::to_string(j);
+      //label = std::to_string(i) + "," + std::to_string(j);
+      label = "    ";
       btn_grid[i][j] -> set_label(label);
     }
   }
+
 }
 
 void MainWindow::load_grid()

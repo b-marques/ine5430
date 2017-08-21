@@ -26,6 +26,7 @@ public:
   bool compute_play(int x, int y);
   GomokuPlay find_squares();
   PlayerTurn player_turn();
+  GameState game_state();
 
 private:
   GomokuCore();

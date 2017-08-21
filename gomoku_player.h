@@ -18,6 +18,7 @@ public:
   void play(int x, int y);
   bool already_played(int x, int y);
   std::unordered_set<GomokuPlay> plays();
+  void clear_plays();
 private:
   PlayerType _player_type;
   std::unordered_set <GomokuPlay> _plays;

@@ -28,6 +28,9 @@ GomokuCore* GomokuCore::instance()
 void GomokuCore::restart()
 {
   _game_state = NEW_GAME;
+  _player_turn = P1;
+  _player[P1].clear_plays();
+  _player[P2].clear_plays();
 }
 
 void GomokuCore::change_turn()
@@ -35,6 +38,7 @@ void GomokuCore::change_turn()
   if(_game_state == NEW_GAME) {
     _game_state = IN_GAME;
   }
+
   _player_turn = _player_turn == P1 ? P2 : P1;
   std::cout << "Player Turn: " << _player_turn << std::endl;
 }
@@ -56,4 +60,9 @@ GomokuPlay GomokuCore::find_squares()
 PlayerTurn GomokuCore::player_turn()
 {
   return _player_turn;
+}
+
+GameState GomokuCore::game_state()
+{
+  return _game_state;
 }
