@@ -41,6 +41,7 @@ void MainWindow::on_grid_button_clicked(int x, int y, Gtk::Button* clicked_butto
     return;
   }
 
+
   if(gomoku_core -> compute_play(x,y)) {   
     if(gomoku_core -> have_winner(x, y)){
       lbl_info -> set_label("Player " + std::to_string(gomoku_core -> player_turn() + 1) + " wins");
@@ -50,20 +51,20 @@ void MainWindow::on_grid_button_clicked(int x, int y, Gtk::Button* clicked_butto
     }
     if(!plays_to_paint.empty()) {
       for(auto play:plays_to_paint){
+
         btn_grid[play.x()][play.y()] -> set_label("    ");
         btn_grid[play.x()][play.y()] -> unset_color(Gtk::STATE_FLAG_NORMAL);
       }
-      plays_to_paint.clear();
     }
-
+    plays_to_paint.clear();
     plays_to_paint = gomoku_core -> sequence_of_four(x, y);
+    
     if(!plays_to_paint.empty()) {
       for(auto play:plays_to_paint){
         btn_grid[play.x()][play.y()] -> set_label("-");
         btn_grid[play.x()][play.y()] -> override_color(Gdk::RGBA("red"));
       }
     }
-
     label = (gomoku_core -> player_turn() == P1) ? "O" : "X";
     clicked_button -> set_label(label);
 

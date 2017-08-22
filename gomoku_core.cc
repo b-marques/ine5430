@@ -74,8 +74,8 @@ std::unordered_set<GomokuPlay> GomokuCore::sequence_of_four(int x, int y)
   std::unordered_set<GomokuPlay> possible_plays;
   
   if(seq->exists) {
-    if( seq->x1 != -1 && 
-        seq->y1 != -1 &&
+    if( seq->x1 > -1 && seq->x1 < 15 && 
+        seq->y1 > -1 && seq->y1 < 15 &&
         (!_player[P1].already_played(seq->x1, seq->y1) &&
          !_player[P2].already_played(seq->x1,seq->y1))) {
           
@@ -83,9 +83,9 @@ std::unordered_set<GomokuPlay> GomokuCore::sequence_of_four(int x, int y)
     }
         
 
-    if(seq->x2 != -1 && 
-       seq->y2 != -1 &&
-        (!_player[P1].already_played(seq->x2, seq->y2) &&
+    if(seq->x2 > -1 && seq->x2 < 15 && 
+       seq->y2 > -1 && seq->y2 < 15 && 
+        (!_player[P1].already_played(seq->x2,seq->y2) &&
          !_player[P2].already_played(seq->x2,seq->y2))) {
 
       possible_plays.insert(GomokuPlay(seq->x2, seq->y2));
