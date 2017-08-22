@@ -35,12 +35,10 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_grid_button_clicked(int x, int y, Gtk::Button* clicked_button)
 { 
-
   std::string label;
   if(gomoku_core -> game_state() == END_GAME) {
     return;
   }
-
 
   if(gomoku_core -> compute_play(x,y)) {   
     if(gomoku_core -> have_winner(x, y)){
