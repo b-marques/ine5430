@@ -6,19 +6,13 @@ por 5 simbolos consecutivos em qualquer direção, poderiamos buscar no tabuleir
 essa sequencia.
 
 Todavia achamos uma maneira mais eficiente de se fazer isso: a partir de x e y, buscar horizontalmente
-por uma sequencia de 5 simbolos "X" ou "O" no intervalo [y-4, y+4], buscar verticalmente a mesma sequencia no intervalo [x-4, x+4] respeitando os limites inferiores e superiores do intervalo.
+por uma sequencia de 5 simbolos "X" ou "O" na linha inteira, buscar verticalmente a mesma sequencia na coluna inteira.
 
-Para as diagonais aplicamos a mesma ideia com a diferença que os intervalos estão em degraus. Uma melhor visualização pode ser feita na imagem "fimdejogo.png".
+Para as diagonais aplicamos a mesma ideia com a diferença que são duas linhas em degraus.
 
 Detecção de uma sequência de 4 (possibilidade de vitória):
 
-A fim de detectarmos ela aplicamos o mesmo algoritmo da sequência de 5, porém os intervalos de busca são menores. 
-
-Intervalo busca horizontal: [y-3, y+3]
-
-Intervalo busca vertical: [x-3, x+3]
-
-Intervalo para diagonal: degraus com intervalo 7.
+A fim de detectarmos ela aplicamos o mesmo algoritmo da sequência de 5, porém agora para um conjunto de 4 simbolos iguais consecutivos.
 
 Obs: notamos que esse método nao detecta possibilidade com "buracos" entre peças como por exemplo na imagem "naodetecta.png" e para entrega final ampliaremos o algoritmo para todas as configurações de possível vitória.
 
