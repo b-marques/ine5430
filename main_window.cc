@@ -55,8 +55,8 @@ void MainWindow::on_grid_button_clicked(int x, int y, Gtk::Button* clicked_butto
         btn_grid[play.x()][play.y()] -> set_label("    ");
         btn_grid[play.x()][play.y()] -> unset_color(Gtk::STATE_FLAG_NORMAL);
       }
+      plays_to_paint.clear();
     }
-    plays_to_paint.clear();
     plays_to_paint = gomoku_core -> sequence_of_four(x, y);
     
     if(!plays_to_paint.empty()) {
