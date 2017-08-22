@@ -10,7 +10,6 @@ class MainWindow : public Gtk::Window
 public:
   MainWindow();
   ~MainWindow();
-  const static int GRID_SIZE = 15;
 
 private:  
   //GUI Building
@@ -24,6 +23,7 @@ private:
 
   // Game control
   GomokuCore* gomoku_core;
+  std::unordered_set<GomokuPlay> plays_to_paint;
 
   //Member widgets:
   Gtk::Button* btn_restart;
@@ -34,7 +34,7 @@ private:
   Gtk::Box* v_box;
   Gtk::Box* h_box;
   Gtk::Grid* grid;
-  Gtk::Button* btn_grid[GRID_SIZE][GRID_SIZE];
+  Gtk::Button* btn_grid[GomokuCore::GRID_SIZE][GomokuCore::GRID_SIZE];
 };
 
 #endif // MAINWINDOW_H

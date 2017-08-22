@@ -19,9 +19,9 @@ MainWindow::~MainWindow()
   // delete btn_human_vs_human;
   // delete btn_human_vs_computer;
   // delete btn_computer_vs_computer;
-  for (auto i = 0; i < GRID_SIZE; ++i)
+  for (auto i = 0; i < GomokuCore::GRID_SIZE; ++i)
   {
-    for (auto j = 0; j < GRID_SIZE; ++j)
+    for (auto j = 0; j < GomokuCore::GRID_SIZE; ++j)
     {
       delete btn_grid[i][j];
     }
@@ -35,6 +35,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_grid_button_clicked(int x, int y, Gtk::Button* clicked_button)
 { 
+
   std::string label;
   if(gomoku_core -> game_state() == END_GAME) {
     return;
@@ -47,6 +48,22 @@ void MainWindow::on_grid_button_clicked(int x, int y, Gtk::Button* clicked_butto
       clicked_button -> set_label(label);
       return;
     }
+    if(!plays_to_paint.empty()) {
+      for(auto play:plays_to_paint){
+        btn_grid[play.x()][play.y()] -> set_label("    ");
+        btn_grid[play.x()][play.y()] -> unset_color(Gtk::STATE_FLAG_NORMAL);
+      }
+      plays_to_paint.clear();
+    }
+
+    plays_to_paint = gomoku_core -> sequence_of_four(x, y);
+    if(!plays_to_paint.empty()) {
+      for(auto play:plays_to_paint){
+        btn_grid[play.x()][play.y()] -> set_label("-");
+        btn_grid[play.x()][play.y()] -> override_color(Gdk::RGBA("red"));
+      }
+    }
+
     label = (gomoku_core -> player_turn() == P1) ? "O" : "X";
     clicked_button -> set_label(label);
 
@@ -62,8 +79,8 @@ void MainWindow::on_restart_button_clicked(Gtk::Button* clicked_button)
   lbl_info -> set_label("Player " + std::to_string(gomoku_core -> player_turn() + 1) + " turn");
 
   std::string label;
-  for(auto i = 0; i < GRID_SIZE; ++i){
-    for(auto j = 0; j < GRID_SIZE; ++j){
+  for(auto i = 0; i < GomokuCore::GRID_SIZE; ++i){
+    for(auto j = 0; j < GomokuCore::GRID_SIZE; ++j){
       //label = std::to_string(i) + "," + std::to_string(j);
       label = "    ";
       btn_grid[i][j] -> set_label(label);
@@ -77,7 +94,7 @@ void MainWindow::load_grid()
   grid = Gtk::manage(new Gtk::Grid());
 
   std::string label;
-  for (auto i = 0; i < GRID_SIZE; ++i) {
+  for (auto i = 0; i < GomokuCore::GRID_SIZE; ++i) {
     if(i){
       label = "    "; //std::to_string(i) + "," + "0";
       btn_grid[i][0] = Gtk::manage(new Gtk::Button(label));
@@ -104,7 +121,7 @@ void MainWindow::load_grid()
       grid -> attach_next_to(*btn_grid[i][0], Gtk::POS_RIGHT, 1, 1);
       btn_grid[i][0] -> show();
     }
-    for (auto j = 0; j < GRID_SIZE; ++j) {
+    for (auto j = 0; j < GomokuCore::GRID_SIZE; ++j) {
       if(j) {
         label = "    "; //std::to_string(i) + "," + std::to_string(j);
         btn_grid[i][j] = Gtk::manage(new Gtk::Button(label));
@@ -144,6 +161,7 @@ void MainWindow::load_buttons()
   btn_restart = Gtk::manage(new Gtk::Button("Restart"));
   btn_restart -> signal_clicked().connect(sigc::bind<Gtk::Button*>(
               sigc::mem_fun(*this, &MainWindow::on_restart_button_clicked), btn_restart));
+  // btn_restart -> override_color(Gdk::RGBA("red"));
   btn_restart -> show();
 
   // btn_human_vs_human = Gtk::manage(new Gtk::Button("vs Human"));
