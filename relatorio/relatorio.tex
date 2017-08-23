@@ -48,7 +48,7 @@
 % ---
 % PACOTES
 % ---
-
+\usepackage{float}
 % ---
 % Pacotes fundamentais 
 % ---
@@ -212,14 +212,43 @@ A linguagem de programação \textit{C++} foi a escolhida para a implementação
 % ----------------------------------------------------------
 \section{Definições matemáticas}
 
-\subsection{Utilidade}
-\subsection{Heurística}
+\subsection{Utilidade e Heurística}
 
+Os números abaixo foram gerados a partir de certos preenchimentos do tabuleiro.
+
+Para o número máximo de unidades, foi suposto um tabuleiro com jogadas intercaladas.
+Para o número máximo de duplas, triplas e quádruplas foram supostos quadrados de tamanho
+respectivamente 2, 3 e 4, a \autoref{estimacao_jogadas} mostra essa estimação para o número máximo de duplas. Foram contados o número de sequências formadas e os valores obtidos foram incrementados por uma certa margem de garantia com o intuito de evitar que uma disposição otimizada das peças no tabuleiro faça com que uma jogada de nível superior tenha menos peso que o máximo de jogadas de um nível inferior, por exemplo, uma dupla contará mais que o máximo de jogadas unitárias.
+
+\begin{figure}[H]
+    \caption{\label{estimacao_jogadas}Exemplo estimação número máximo de jogadas.}
+        \begin{center}
+            \includegraphics[scale=0.75]{nMaxDupla.png}
+        \end{center}
+\end{figure}
 
 \begin{verbatim}
-   \setlrmarginsandblock{3cm}{3cm}{*}
-   \setulmarginsandblock{3cm}{3cm}{*}
-   \checkandfixthelayout
+n_max_unidades = 113
+n_max_aprox_duplas = 100
+n_max_aprox_triplas = 96
+n_max_aprox_quadruplas = 70
+
+nota = 
+   (n_unidades + 
+    n_max_unidades * n_duplas +
+    n_max_unidades * n_max_aprox_duplas * n_triplas +
+    n_max_unidades * n_max_aprox_duplas * n_max_aprox_triplas * n_quadruplas + 
+    n_max_unidades * n_max_aprox_duplas * n_max_aprox_triplas * 
+                                      n_max_aprox_quadruplas * n_quintuplas) -
+   (n_unidades_adversario +
+    n_max_unidades * n_duplas_adversario +
+    n_max_unidades * n_max_aprox_duplas * n_triplas_adversario + 
+    n_max_unidades * n_max_aprox_duplas * n_max_aprox_triplas * 
+                                                     n_quadruplas_adversario +
+    n_max_unidades * n_max_aprox_duplas * n_max_aprox_triplas *
+                              n_max_aprox_quadruplas * n_quintuplas_adversario)
+
+UTILIDADE e HEURÍSTICA = 1/n_jogadas * nota
 \end{verbatim}
 
 \section{Detecções}
@@ -249,14 +278,14 @@ Foi verificado que esse método não detecta possibilidade com 'buracos' entre p
 \begin{figure}[htb]
     \caption{\label{detecta}Sequência de 4 símbolos: detecta.}
         \begin{center}
-            \includegraphics[scale=0.71]{detecta.png}
+            \includegraphics[scale=0.6]{detecta.png}
         \end{center}
 \end{figure}
 
 \begin{figure}[htb]
     \caption{\label{nao_detecta}Sequência de 4 símbolos: não detecta.}
         \begin{center}
-            \includegraphics[scale=0.55]{naodetecta.png}
+            \includegraphics[scale=0.45]{naodetecta.png}
         \end{center}
 \end{figure}
 
