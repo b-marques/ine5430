@@ -18,6 +18,14 @@ Obs: notamos que esse método nao detecta possibilidade com "buracos" entre peç
 
 Função heuristica:
 
+Os numeros abaixo foram gerados a partir de certos preenchimentos do tabuleiro.
+
+Para o numero maximo de unidades, supomos um tabuleiro com jogadas intercaladas.
+Para o numero maximo de duplas, triplas e quadruplas supomos varios quadrados de tamanho
+respectivamente 2, 3 e 4 -como na imagem "nMaxDupla.png"- contamos quantas sequencias se formavam
+e ainda aumentamos um pouco esse valor por garantia de existir alguma outra combinação um pouco
+melhor.
+
 nMax_unidades = 113
 nMax_aprox_duplas = 100
 nMax_aprox_triplas = 96
