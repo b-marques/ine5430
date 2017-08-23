@@ -176,7 +176,6 @@ SeqGap* GomokuCore::find_sequence(int x, int y, int seq_size)
     gap->exists = true;
     gap->x1 = vert_pos - 1;
     gap->x2 = vert_pos + seq_size;
-    std::cout << gap->x1 << gap->x2 << std::endl;
     return gap;  
   }
 
