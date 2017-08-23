@@ -16,3 +16,14 @@ A fim de detectarmos ela aplicamos o mesmo algoritmo da sequência de 5, porém 
 
 Obs: notamos que esse método nao detecta possibilidade com "buracos" entre peças como por exemplo na imagem "naodetecta.png" e para entrega final ampliaremos o algoritmo para todas as configurações de possível vitória.
 
+Função heuristica:
+
+nMax_unidades = 113
+nMax_aprox_duplas = 100
+nMax_aprox_triplas = 96
+nMax_aprox_quadruplas = 70
+
+Heuristica = 1/nJogadas * Nota
+
+Nota = (nUnidades + nMax_unidades*nDuplas + nMax_unidades*nMax_aprox_duplas*nTriplas + nMax_unidades*nMax_aprox_duplas*nMax_aprox_triplas*nQuadruplas + nMax_unidades*nMax_aprox_duplas*nMax_aprox_triplas*nMax_aprox_quadruplas*nQuintuplas) -
+(nUnidadesAdversario + nMax_unidades*nDuplasAdversario + nMax_unidades*nMax_aprox_duplas*nTriplasAdversario + nMax_unidades*nMax_aprox_duplas*nMax_aprox_triplas*nQuadruplasAdversario + nMax_unidades*nMax_aprox_duplas*nMax_aprox_triplas*nMax_aprox_quadruplas*nQuintuplasAdversario)
