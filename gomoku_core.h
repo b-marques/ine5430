@@ -23,6 +23,8 @@ enum PlayerTurn {
 class GomokuCore
 {
 public:
+  const static int GRID_SIZE = 15;
+  
   static GomokuCore* instance();
   ~GomokuCore();  
   void restart();
@@ -34,7 +36,8 @@ public:
   PlayerTurn player_turn();
   GameState game_state();
 
-  const static int GRID_SIZE = 15;
+  GomokuPlay minimax(std::string grid[GRID_SIZE][GRID_SIZE], int depth);
+
 
 private:
   GomokuCore();

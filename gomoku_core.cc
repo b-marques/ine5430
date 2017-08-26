@@ -251,3 +251,10 @@ void GomokuCore::fill_grid(std::string string) {
 	  }
   }
 }
+
+GomokuPlay GomokuCore::minimax(std::string grid[GRID_SIZE][GRID_SIZE], int depth){
+  // îf(have_winner() || depth == 0)
+    // return evaluate(grid);
+
+  return GomokuPlay(0,0);
+}
