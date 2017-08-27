@@ -6,10 +6,11 @@
 #include <vector>
 #include <algorithm> //std::sort
 
+#include "gomoku_core.h"
 #define GRID_SIZE 15
 #define GRID_SIZE_M_1 14
 #define PLAYER_1 1
-#define PLAYER_0 0 
+#define PLAYER_0 0
 
 int grid[GRID_SIZE][GRID_SIZE];
 
@@ -47,7 +48,7 @@ bool check_winner(int player)
         if(s > GRID_SIZE_M_1 || grid[i][s] == -1){
           vertical = -1;
           break;
-        } 
+        }
         vertical = (vertical << 1) + grid[i][s];
       }
       if (vertical == win_sequence)
@@ -58,12 +59,12 @@ bool check_winner(int player)
   // DIAGONAL 1 SEARCH TOP:
   int diagonal1;
   for(auto i = 0; i < GRID_SIZE; ++i) {
-    for(auto i_aux = i, 
+    for(auto i_aux = i,
              j_aux = 0;
-             i_aux > -1; 
+             i_aux > -1;
              --i_aux, ++j_aux) {
       diagonal1 = 0;
-      for(auto i_sequence = i_aux, 
+      for(auto i_sequence = i_aux,
                j_sequence = j_aux,
                count = 0;
                count < 5;
@@ -71,7 +72,7 @@ bool check_winner(int player)
         if(i_sequence < 0 || grid[i_sequence][j_sequence] == -1) {
           diagonal1 = -1;
           break;
-        } 
+        }
         diagonal1 = (diagonal1 << 1) + grid[i_sequence][j_sequence];
       }
       if (diagonal1 == win_sequence)
@@ -80,13 +81,13 @@ bool check_winner(int player)
   }
   // DIAGONAL SEARCH 1 BOTTOM:
   for(auto j = 1; j < GRID_SIZE; ++j) {
-    for(auto i_aux = 14, 
+    for(auto i_aux = 14,
              j_aux = j;
-             j_aux < GRID_SIZE; 
+             j_aux < GRID_SIZE;
              --i_aux, ++j_aux){
 
       diagonal1 = 0;
-      for(auto i_sequence = i_aux, 
+      for(auto i_sequence = i_aux,
                j_sequence = j_aux,
                count = 0;
                count < 5;
@@ -94,10 +95,10 @@ bool check_winner(int player)
         if(j_sequence > GRID_SIZE_M_1 || grid[i_sequence][j_sequence] == -1){
           diagonal1 = -1;
           break;
-        } 
+        }
         diagonal1 = (diagonal1 << 1) + grid[i_sequence][j_sequence];
       }
-      
+
       if (diagonal1 == win_sequence)
         return true;
     }
@@ -105,12 +106,12 @@ bool check_winner(int player)
   int diagonal2;
   // DIAGONAL 2 SEARCH TOP
   for(auto j = 0; j < GRID_SIZE; ++j) {
-    for(auto i_aux = 0, 
+    for(auto i_aux = 0,
              j_aux = j;
-             j_aux < GRID_SIZE; 
+             j_aux < GRID_SIZE;
              ++i_aux, ++j_aux){
       diagonal2 = 0;
-      for(auto i_sequence = i_aux, 
+      for(auto i_sequence = i_aux,
                j_sequence = j_aux,
                count = 0;
                count < 5;
@@ -118,9 +119,9 @@ bool check_winner(int player)
         if(j_sequence > GRID_SIZE_M_1 || grid[i_sequence][j_sequence] == -1){
           diagonal2 = -1;
           break;
-        } 
+        }
         diagonal2 = (diagonal2 << 1) + grid[i_sequence][j_sequence];
-      
+
       }
       if (diagonal2 == win_sequence)
         return true;
@@ -129,12 +130,12 @@ bool check_winner(int player)
 
   // DIAGONAL 2 SEARCH BOTTOM
   for(auto i = 1; i < GRID_SIZE; ++i) {
-    for(auto i_aux = i, 
+    for(auto i_aux = i,
              j_aux = 0;
-             i_aux < GRID_SIZE; 
+             i_aux < GRID_SIZE;
              ++i_aux, ++j_aux){
       diagonal2 = 0;
-      for(auto i_sequence = i_aux, 
+      for(auto i_sequence = i_aux,
                j_sequence = j_aux,
                count = 0;
                count < 5;
@@ -142,9 +143,9 @@ bool check_winner(int player)
         if(i_sequence > GRID_SIZE_M_1 || grid[i_sequence][j_sequence] == -1){
           diagonal2 = -1;
           break;
-        } 
+        }
         diagonal2 = (diagonal2 << 1) + grid[i_sequence][j_sequence];
-      
+
       }
       if (diagonal2 == win_sequence)
         return true;
@@ -197,8 +198,112 @@ void populate_grid()
   }
   std::cout << print << std::endl;
 }
- 
 
+void evaluate_sequence(int& n_unities_open, int&	n_doubles_open,
+		int& n_triples_open, int& n_quadruples_open, int& n_quintuples,
+		int sequence, int n_opens){
+	switch (sequence) {
+		case 1:
+			n_unities_open += n_opens;
+			break;
+		case 2:
+			n_doubles_open += n_opens;
+			break;
+		case 3:
+			n_triples_open += n_opens;
+			break;
+		case 4:
+			n_quadruples_open += n_opens;
+			break;
+		case 5:
+			n_quintuples++;
+			break;
+		default:
+			break;
+	}
+}
+
+int grid_grade(int grid[GRID_SIZE][GRID_SIZE], PlayerTurn turn){
+	int n_unities_open = 0,
+		n_doubles_open = 0,
+		n_triples_open = 0,
+		n_quadruples_open = 0,
+		n_quintuples = 0,
+		sequence = 0,
+		last_position = turn == 0 ? 1 : 0,
+		n_opens;
+
+
+	//HORIZONTAL GRADE
+	for (int i = 0; i < GRID_SIZE; ++i) {
+		n_opens = 0;
+		sequence = 0;
+		last_position = turn == 0 ? 1 : 0;
+		for (int j = 0; j < GRID_SIZE; ++j) {
+			if(grid[i][j] == turn){
+				sequence++;
+				if(last_position == -1)
+					n_opens++;
+				if(j == GRID_SIZE - 1 && n_opens > 0){
+					evaluate_sequence(n_unities_open, n_doubles_open, n_triples_open, n_quadruples_open, n_quintuples, sequence, n_opens);
+					n_opens = 0;
+					sequence = 0;
+				}
+			}
+			else if(grid[i][j] == -1){
+				if(sequence > 0){
+					n_opens++;
+					evaluate_sequence(n_unities_open, n_doubles_open, n_triples_open, n_quadruples_open, n_quintuples, sequence, n_opens);
+					n_opens = 0;
+					sequence = 0;
+				}
+			} else {
+				if(sequence > 0){
+					evaluate_sequence(n_unities_open, n_doubles_open, n_triples_open, n_quadruples_open, n_quintuples, sequence, n_opens);
+					n_opens = 0;
+					sequence = 0;
+				}
+			}
+			last_position = grid[i][j];
+		}
+	}
+
+	//VERTICAL GRADE
+	for (int j = 0; j < GRID_SIZE; ++j) {
+		n_opens = 0;
+		sequence = 0;
+		last_position = turn == 0 ? 1 : 0;
+		for (int i = 0; i < GRID_SIZE; ++i) {
+			if(grid[i][j] == turn){
+				sequence++;
+				if(last_position == -1)
+					n_opens++;
+				if(i == GRID_SIZE - 1 && n_opens > 0){
+					evaluate_sequence(n_unities_open, n_doubles_open, n_triples_open, n_quadruples_open, n_quintuples, sequence, n_opens);
+					n_opens = 0;
+					sequence = 0;
+				}
+			}
+			else if(grid[i][j] == -1){
+				if(sequence > 0){
+					n_opens++;
+					evaluate_sequence(n_unities_open, n_doubles_open, n_triples_open, n_quadruples_open, n_quintuples, sequence, n_opens);
+					n_opens = 0;
+					sequence = 0;
+				}
+			} else {
+				if(sequence > 0){
+					evaluate_sequence(n_unities_open, n_doubles_open, n_triples_open, n_quadruples_open, n_quintuples, sequence, n_opens);
+					n_opens = 0;
+					sequence = 0;
+				}
+			}
+			last_position = grid[i][j];
+		}
+	}
+
+	return n_unities_open + 113*n_doubles_open + 113*100*n_triples_open + 113*100*96*n_quadruples_open + 113*100*96*70*n_quintuples;
+}
 
 int main()
 {
@@ -215,4 +320,6 @@ int main()
             << std::chrono::duration<double, std::milli>(t_end-t_start).count()
             << " ms\n";
  
+  std::cout << grid_grade(grid, P1) << std::endl;
+  std::cout << grid_grade(grid, P2);
 }
