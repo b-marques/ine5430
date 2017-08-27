@@ -215,10 +215,9 @@ void evaluate_sequence(int& n_unities_open, int&	n_doubles_open,
 		case 4:
 			n_quadruples_open += n_opens;
 			break;
-		case 5:
-			n_quintuples++;
-			break;
 		default:
+			if(sequence > 4 && sequence < 10)
+				n_quintuples++;
 			break;
 	}
 }
@@ -244,7 +243,7 @@ int grid_grade(int grid[GRID_SIZE][GRID_SIZE], PlayerTurn turn){
 				sequence++;
 				if(last_position == -1)
 					n_opens++;
-				if(j == GRID_SIZE - 1 && n_opens > 0){
+				if(j == GRID_SIZE - 1){
 					evaluate_sequence(n_unities_open, n_doubles_open, n_triples_open, n_quadruples_open, n_quintuples, sequence, n_opens);
 					n_opens = 0;
 					sequence = 0;
@@ -278,7 +277,7 @@ int grid_grade(int grid[GRID_SIZE][GRID_SIZE], PlayerTurn turn){
 				sequence++;
 				if(last_position == -1)
 					n_opens++;
-				if(i == GRID_SIZE - 1 && n_opens > 0){
+				if(i == GRID_SIZE - 1){
 					evaluate_sequence(n_unities_open, n_doubles_open, n_triples_open, n_quadruples_open, n_quintuples, sequence, n_opens);
 					n_opens = 0;
 					sequence = 0;
