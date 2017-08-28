@@ -16,6 +16,114 @@ int count = 0;
 int turn = 0;
 int grid[GRID_SIZE][GRID_SIZE];
 
+void evaluate_sequence(int& n_unities_open, int&  n_doubles_open,
+    int& n_triples_open, int& n_quadruples_open, int& n_quintuples,
+    int sequence, int n_opens){
+  switch (sequence) {
+    case 1:
+      n_unities_open += n_opens;
+      break;
+    case 2:
+      n_doubles_open += n_opens;
+      break;
+    case 3:
+      n_triples_open += n_opens;
+      break;
+    case 4:
+      n_quadruples_open += n_opens;
+      break;
+    case 5:
+      n_quintuples++;
+      break;
+    default:
+      break;
+  }
+}
+
+int evaluate(int grid[GRID_SIZE][GRID_SIZE], Player player)
+{
+  int n_unities_open = 0,
+      n_doubles_open = 0,
+      n_triples_open = 0,
+      n_quadruples_open = 0,
+      n_quintuples = 0,
+      sequence = 0,
+      last_position = player == 0 ? 1 : 0,
+      n_opens;
+
+
+  //HORIZONTAL GRADE
+  for (int i = 0; i < GRID_SIZE; ++i) {
+    n_opens = 0;
+    sequence = 0;
+    last_position = player == 0 ? 1 : 0;
+    for (int j = 0; j < GRID_SIZE; ++j) {
+      if(grid[i][j] == player){
+        sequence++;
+        if(last_position == -1)
+          n_opens++;
+        if(j == GRID_SIZE - 1){
+          evaluate_sequence(n_unities_open, n_doubles_open, n_triples_open, n_quadruples_open, n_quintuples, sequence, n_opens);
+          n_opens = 0;
+          sequence = 0;
+        }
+      }
+      else if(grid[i][j] == -1){
+        if(sequence > 0){
+          n_opens++;
+          evaluate_sequence(n_unities_open, n_doubles_open, n_triples_open, n_quadruples_open, n_quintuples, sequence, n_opens);
+          n_opens = 0;
+          sequence = 0;
+        }
+      } else {
+        if(sequence > 0){
+          evaluate_sequence(n_unities_open, n_doubles_open, n_triples_open, n_quadruples_open, n_quintuples, sequence, n_opens);
+          n_opens = 0;
+          sequence = 0;
+        }
+      }
+      last_position = grid[i][j];
+    }
+  }
+
+  //VERTICAL GRADE
+  for (int j = 0; j < GRID_SIZE; ++j) {
+    n_opens = 0;
+    sequence = 0;
+    last_position = player == 0 ? 1 : 0;
+    for (int i = 0; i < GRID_SIZE; ++i) {
+      if(grid[i][j] == player){
+        sequence++;
+        if(last_position == -1)
+          n_opens++;
+        if(i == GRID_SIZE - 1){
+          evaluate_sequence(n_unities_open, n_doubles_open, n_triples_open, n_quadruples_open, n_quintuples, sequence, n_opens);
+          n_opens = 0;
+          sequence = 0;
+        }
+      }
+      else if(grid[i][j] == -1){
+        if(sequence > 0){
+          n_opens++;
+          evaluate_sequence(n_unities_open, n_doubles_open, n_triples_open, n_quadruples_open, n_quintuples, sequence, n_opens);
+          n_opens = 0;
+          sequence = 0;
+        }
+      } else {
+        if(sequence > 0){
+          evaluate_sequence(n_unities_open, n_doubles_open, n_triples_open, n_quadruples_open, n_quintuples, sequence, n_opens);
+          n_opens = 0;
+          sequence = 0;
+        }
+      }
+      last_position = grid[i][j];
+    }
+  }
+
+  return n_unities_open + 113*n_doubles_open + 113*100*n_triples_open + 113*100*96*n_quadruples_open + 113*100*96*70*n_quintuples;
+}
+
+
 bool check_winner(int Player)
 {
   int win_sequence = 0;
@@ -135,166 +243,14 @@ bool game_over()
   if(check_winner(AI)) return true;
 
   //Search for blank spaces
-  for(auto i = 0; i < GRID_SIZE; ++i){
-    for(auto j = 0; j < GRID_SIZE; ++j) {
+  for(auto i = 0; i < GRID_SIZE; ++i)
+    for(auto j = 0; j < GRID_SIZE; ++j)
       if(grid[i][j] == -1)
         return false;
-    }
-  }
+
   return true;
 }
-
-void populate_grid()
-{
-  for(auto i = 0; i < 15; ++i)
-    for(auto j = 0; j < 15; ++j) {
-      grid[i][j] = -1;
-    }
-}
-
-void evaluate_sequence(int& n_unities_open, int&	n_doubles_open,
-		int& n_triples_open, int& n_quadruples_open, int& n_quintuples,
-		int sequence, int n_opens)
-{
-	switch (sequence) {
-		case 1:
-			n_unities_open += n_opens;
-			break;
-		case 2:
-			n_doubles_open += n_opens;
-			break;
-		case 3:
-			n_triples_open += n_opens;
-			break;
-		case 4:
-			n_quadruples_open += n_opens;
-			break;
-		default:
-			if(sequence > 4 && sequence < 10)
-				n_quintuples++;
-			break;
-	}
-}
-
-void treats_sequence(const int i, const int j, Player turn, int& sequence, int& n_opens,
-		int& last_position, int& n_unities_open, int& n_doubles_open,
-		int& n_triples_open, int& n_quadruples_open, int& n_quintuples, bool reached_grid_limit)
-{
-
-	if(grid[i][j] == turn){
-		sequence++;
-		if(last_position == -1)
-			n_opens++;
-		if(reached_grid_limit){
-			evaluate_sequence(n_unities_open, n_doubles_open, n_triples_open, n_quadruples_open, n_quintuples, sequence, n_opens);
-			n_opens = 0;
-			sequence = 0;
-		}
-	}
-	else if(grid[i][j] == -1){
-		if(sequence > 0){
-			n_opens++;
-			evaluate_sequence(n_unities_open, n_doubles_open, n_triples_open, n_quadruples_open, n_quintuples, sequence, n_opens);
-			n_opens = 0;
-			sequence = 0;
-		}
-	} else {
-		if(sequence > 0){
-			evaluate_sequence(n_unities_open, n_doubles_open, n_triples_open, n_quadruples_open, n_quintuples, sequence, n_opens);
-			n_opens = 0;
-			sequence = 0;
-		}
-	}
-	last_position = grid[i][j];
-}
-
-int evaluate(int (&grid)[GRID_SIZE][GRID_SIZE], Player turn)
-{
-	int n_unities_open = 0,
-		n_doubles_open = 0,
-		n_triples_open = 0,
-		n_quadruples_open = 0,
-		n_quintuples = 0,
-		sequence = 0,
-		last_position = turn == 0 ? 1 : 0,
-		n_opens;
-	bool reached_grid_limit;
-
-	//HORIZONTAL GRADE
-	for (int i = 0; i < GRID_SIZE; ++i) {
-		n_opens = 0;
-		sequence = 0;
-		last_position = turn == 0 ? 1 : 0;
-		for (int j = 0; j < GRID_SIZE; ++j) {
-			reached_grid_limit = j == GRID_SIZE - 1;
-			treats_sequence(i, j, turn, sequence, n_opens, last_position, n_unities_open,
-					n_doubles_open, n_triples_open, n_quadruples_open, n_quintuples, reached_grid_limit);
-		}
-	}
-
-	//VERTICAL GRADE
-	for (int j = 0; j < GRID_SIZE; ++j) {
-		n_opens = 0;
-		sequence = 0;
-		last_position = turn == 0 ? 1 : 0;
-		for (int i = 0; i < GRID_SIZE; ++i) {
-			reached_grid_limit = i == GRID_SIZE - 1;
-			treats_sequence(i, j, turn, sequence, n_opens, last_position, n_unities_open,
-					n_doubles_open, n_triples_open, n_quadruples_open, n_quintuples, reached_grid_limit);
-		}
-	}
-
-	//UPPER LEFT TO LOWER RIGHT GRADE {(0, 14)}, {(0, 13), (1, 14)} ...
-	for (int diagonal = GRID_SIZE - 1; diagonal > -1; --diagonal) {
-		n_opens = 0;
-		sequence = 0;
-		last_position = turn == 0 ? 1 : 0;
-		for (int i = 0, j = diagonal; j < GRID_SIZE; ++i, ++j) {
-			reached_grid_limit = j == GRID_SIZE - 1;
-			treats_sequence(i, j, turn, sequence, n_opens, last_position, n_unities_open,
-					n_doubles_open, n_triples_open, n_quadruples_open, n_quintuples, reached_grid_limit);
-		}
-	}
-
-	for (int diagonal = 1; diagonal < GRID_SIZE; ++diagonal) {
-		n_opens = 0;
-		sequence = 0;
-		last_position = turn == 0 ? 1 : 0;
-		for (int i = diagonal, j = 0; i < GRID_SIZE; ++i, ++j) {
-			reached_grid_limit = i == GRID_SIZE - 1;
-			treats_sequence(i, j, turn, sequence, n_opens, last_position, n_unities_open,
-					n_doubles_open, n_triples_open, n_quadruples_open, n_quintuples, reached_grid_limit);
-		}
-	}
-
-	//UPPER RIGHT TO LOWER LEFT GRADE {(0, 0)}, {(0, 1), (1, 0)}, {(0, 2), (1, 1), (2, 0)} ...
-	for (int diagonal = 0; diagonal < GRID_SIZE; ++diagonal) {
-		n_opens = 0;
-		sequence = 0;
-		last_position = turn == 0 ? 1 : 0;
-		for (int i = 0, j = diagonal; j > -1; ++i, --j) {
-			reached_grid_limit = j == 0;
-			treats_sequence(i, j, turn, sequence, n_opens, last_position, n_unities_open,
-					n_doubles_open, n_triples_open, n_quadruples_open, n_quintuples, reached_grid_limit);
-		}
-	}
-
-	for (int diagonal = 1; diagonal < GRID_SIZE; ++diagonal) {
-		n_opens = 0;
-		sequence = 0;
-		last_position = turn == 0 ? 1 : 0;
-		for (int i = diagonal, j = GRID_SIZE - 1; i < GRID_SIZE; ++i, --j) {
-			reached_grid_limit = i == 0;
-			treats_sequence(i, j, turn, sequence, n_opens, last_position, n_unities_open,
-					n_doubles_open, n_triples_open, n_quadruples_open, n_quintuples, reached_grid_limit);
-		}
-	}
-
-	return n_unities_open + 113*n_doubles_open + 113*100*n_triples_open + 113*100*96*n_quadruples_open + 113*100*96*70*n_quintuples;
-}
-
-void print_grid(const int (&array)[GRID_SIZE][GRID_SIZE])
-{
+void print_grid(const int (&array)[GRID_SIZE][GRID_SIZE]) {
 
   std::string print = "";
   for(auto i = 0; i < 15; ++i){
@@ -308,8 +264,7 @@ void print_grid(const int (&array)[GRID_SIZE][GRID_SIZE])
 
 int max_search(int (&state)[GRID_SIZE][GRID_SIZE], int depth, int alpha, int beta);
 
-int min_search(int (&state)[GRID_SIZE][GRID_SIZE], int depth, int alpha, int beta)
-{
+int min_search(int (&state)[GRID_SIZE][GRID_SIZE], int depth, int alpha, int beta) {
   if(depth == 0 || game_over()) 
     return evaluate(state, AI);
 
@@ -333,8 +288,8 @@ int min_search(int (&state)[GRID_SIZE][GRID_SIZE], int depth, int alpha, int bet
   return best_score;
 }
 
-int max_search(int (&state)[GRID_SIZE][GRID_SIZE], int depth, int alpha, int beta)
-{
+int max_search(int (&state)[GRID_SIZE][GRID_SIZE], int depth, int alpha, int beta) {
+  ++count;
   if(depth == 0 || game_over()) 
     return evaluate(state, AI);
   
@@ -358,8 +313,7 @@ int max_search(int (&state)[GRID_SIZE][GRID_SIZE], int depth, int alpha, int bet
   return best_score;
 }
 
-std::tuple<int,int> minimax(int (&state)[GRID_SIZE][GRID_SIZE],int depth)
-{
+std::tuple<int,int> minimax(int (&state)[GRID_SIZE][GRID_SIZE],int depth) {
   int best_score = INT32_MAX;
   std::tuple<int,int> best_move;
   auto alpha = INT32_MIN;
@@ -379,6 +333,24 @@ std::tuple<int,int> minimax(int (&state)[GRID_SIZE][GRID_SIZE],int depth)
   }
   return best_move;
 }
+
+void populate_grid()
+{
+  for(auto i = 0; i < 15; ++i)
+    for(auto j = 0; j < 15; ++j)
+      grid[i][j] = -1;
+
+  // for(auto i = 14, j=1; i > 10; --i)
+  //   grid[i][j] = AI;
+
+  // for(auto j = 14, i=1; j > 9; --j)
+  //   grid[i][j] = AI;
+
+    // grid[14][1] = 0;
+  // for(auto i = 9, j=1; i > 5; --i, ++j)
+    // grid[i][j] = PLAYER_0;
+}
+
 
 int main()
 {
