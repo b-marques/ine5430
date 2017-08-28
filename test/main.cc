@@ -16,11 +16,11 @@ int count = 0;
 int turn = 0;
 int grid[GRID_SIZE][GRID_SIZE];
 
-bool check_winner(int Player)
+bool check_winner(int player)
 {
   int win_sequence = 0;
   for (int i = 0; i < 5; ++i) {
-    win_sequence = (win_sequence << 1) + Player;
+    win_sequence = (win_sequence << 1) + player;
   }
   // std::cout << win_sequence << std::endl;
 
