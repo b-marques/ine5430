@@ -10,6 +10,8 @@
 #define GRID_SIZE 15
 #define GRID_SIZE_M_1 14
 
+int n_jogadas = 0;
+
 enum Player {
   PLAYER_0 = 0,
   AI = 1,
@@ -319,9 +321,10 @@ int max_search(int (&state)[GRID_SIZE][GRID_SIZE], int depth, int alpha, int bet
 
 int min_search(int (&state)[GRID_SIZE][GRID_SIZE], int depth, int alpha, int beta)
 {
+  ++g_count;
   if(depth == 0 || game_over()) {
     // std::cout << "minevaluate" << std::endl;
-    return evaluate(state, game_turn, 1) - evaluate(state, !game_turn, 1);
+    return evaluate(state, game_turn, depth+1) - evaluate(state, !game_turn, depth+1);
   }
 
   for(auto i = 0; i < GRID_SIZE; ++i){
@@ -348,9 +351,10 @@ int min_search(int (&state)[GRID_SIZE][GRID_SIZE], int depth, int alpha, int bet
 
 int max_search(int (&state)[GRID_SIZE][GRID_SIZE], int depth, int alpha, int beta)
 {
+  ++g_count;
   if(depth == 0 || game_over()) {
     // std::cout << "maxevaluate" << std::endl;
-    return evaluate(state, game_turn, 1) - evaluate(state, !game_turn, 1);
+    return evaluate(state, game_turn, depth+1) - evaluate(state, !game_turn, depth+1);
   }
   for(auto i = 0; i < GRID_SIZE; ++i){
     for(auto j = 0; j < GRID_SIZE; ++j) {
@@ -405,20 +409,34 @@ std::tuple<int,int> teste()
   return std::tuple<int, int>(0,5);
 }
 
+int prof = 2;
 
 void game_core(){
   print_grid(grid);
   while(true){
-    std::tuple<int,int> play = minimax(grid, 3);
+    ++n_jogadas;
+
+    std::tuple<int,int> play = minimax(grid, prof);
     grid[std::get<0>(play)][std::get<1>(play)] = game_turn;
     if (check_winner(game_turn))
       break;
     game_turn = game_turn == 0 ? 1:0;
+    if(n_jogadas == 125)
+      prof = 3;
+
+    if(n_jogadas == 145)
+      prof = 4;
+
+
     system("clear");
     print_grid(grid);
+    std::cout << g_count << std::endl;
+    std::cout << n_jogadas << std::endl;
   }
   system("clear");
   print_grid(grid);
+  std::cout << g_count << std::endl;
+  std::cout << n_jogadas << std::endl;
 }
 
 int main()
@@ -453,6 +471,7 @@ int main()
   // std::cout << "grid: "
   //           << std::chrono::duration<double, std::milli>(t_end-t_start).count()
   //           << " ms\n"; 
-
+  system("clear");
   game_core();
+  std::cout << g_count;
 }
