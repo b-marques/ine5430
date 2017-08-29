@@ -1,6 +1,8 @@
 #include <iostream>
 #include <chrono>
 
+#include <stdlib.h>
+
 #include <unordered_set>
 #include <tuple>
 #include <vector>
@@ -12,8 +14,9 @@ enum Player {
   PLAYER_0 = 0,
   AI = 1,
 };
-int count = 0;
-int turn = 0;
+int game_turn = 0;
+int g_count = 0;
+// int turn = 0;
 int grid[GRID_SIZE][GRID_SIZE];
 
 bool check_winner(int player)
@@ -131,8 +134,10 @@ bool check_winner(int player)
 
 bool game_over()
 {
-  if(check_winner(PLAYER_0)) return true;
-  if(check_winner(AI)) return true;
+  if(check_winner(PLAYER_0)) 
+    return true;
+  if(check_winner(AI))
+    return true;
 
   //Search for blank spaces
   for(auto i = 0; i < GRID_SIZE; ++i){
@@ -176,7 +181,7 @@ void evaluate_sequence(int& n_unities_open, int&	n_doubles_open,
 	}
 }
 
-void treats_sequence(const int i, const int j, Player turn, int& sequence, int& n_opens,
+void treats_sequence(const int i, const int j, int turn, int& sequence, int& n_opens,
 		int& last_position, int& n_unities_open, int& n_doubles_open,
 		int& n_triples_open, int& n_quadruples_open, int& n_quintuples, bool reached_grid_limit)
 {
@@ -208,7 +213,7 @@ void treats_sequence(const int i, const int j, Player turn, int& sequence, int& 
 	last_position = grid[i][j];
 }
 
-int evaluate(int (&grid)[GRID_SIZE][GRID_SIZE], Player turn)
+int evaluate(int (&grid)[GRID_SIZE][GRID_SIZE], int turn, int depth)
 {
 	int n_unities_open = 0,
 		n_doubles_open = 0,
@@ -290,7 +295,7 @@ int evaluate(int (&grid)[GRID_SIZE][GRID_SIZE], Player turn)
 		}
 	}
 
-	return n_unities_open + 113*n_doubles_open + 113*100*n_triples_open + 113*100*96*n_quadruples_open + 113*100*96*70*n_quintuples;
+	return (n_unities_open + 113*n_doubles_open + 113*100*n_triples_open + 113*100*96*n_quadruples_open + 113*100*96*70*n_quintuples)*depth;
 }
 
 void print_grid(const int (&array)[GRID_SIZE][GRID_SIZE])
@@ -299,7 +304,11 @@ void print_grid(const int (&array)[GRID_SIZE][GRID_SIZE])
   std::string print = "";
   for(auto i = 0; i < 15; ++i){
     for(auto j = 0; j < 15; ++j) {
-      print += std::to_string(array[i][j]) + "   ";
+      if(array[i][j] == -1){
+        print += "| - ";
+      } else {
+        print += "| " + std::to_string(array[i][j]) + " ";
+      }
     }
     print += "\n";
   }
@@ -310,68 +319,79 @@ int max_search(int (&state)[GRID_SIZE][GRID_SIZE], int depth, int alpha, int bet
 
 int min_search(int (&state)[GRID_SIZE][GRID_SIZE], int depth, int alpha, int beta)
 {
-  if(depth == 0 || game_over()) 
-    return evaluate(state, AI);
+  if(depth == 0 || game_over()) {
+    // std::cout << "minevaluate" << std::endl;
+    return evaluate(state, game_turn, 1) - evaluate(state, !game_turn, 1);
+  }
 
-  auto best_score = beta;
   for(auto i = 0; i < GRID_SIZE; ++i){
     for(auto j = 0; j < GRID_SIZE; ++j) {
       if(state[i][j] == -1) {
-        state[i][j] = AI;
-        auto temp_score = max_search(state, depth-1, alpha, best_score);
-        if(temp_score < best_score)
-          best_score = temp_score;
+        // std::cout << "min = [" << i << "][" << j << "]" << std::endl;
+        state[i][j] = game_turn;
+        auto temp_score = max_search(state, depth-1, alpha, beta);
+        // std::cout << temp_score << std::endl;
+        if(temp_score > alpha)
+          alpha = temp_score;
         
-        if(best_score < alpha)
+        if(alpha >= beta) {
           state[i][j] = -1;
-          return alpha;
+          return beta;
+        }
 
         state[i][j] = -1;
       }
     }
   }
-  return best_score;
+  return alpha;
 }
 
 int max_search(int (&state)[GRID_SIZE][GRID_SIZE], int depth, int alpha, int beta)
 {
-  if(depth == 0 || game_over()) 
-    return evaluate(state, AI);
-  
-  auto best_score = alpha;
+  if(depth == 0 || game_over()) {
+    // std::cout << "maxevaluate" << std::endl;
+    return evaluate(state, game_turn, 1) - evaluate(state, !game_turn, 1);
+  }
   for(auto i = 0; i < GRID_SIZE; ++i){
     for(auto j = 0; j < GRID_SIZE; ++j) {
       if(state[i][j] == -1) {
-        state[i][j] = PLAYER_0;
-        auto temp_score = min_search(state, depth-1, best_score, beta);
-        if(temp_score > best_score)
-          best_score = temp_score;
+        // std::cout << "max = [" << i << "][" << j << "]" << std::endl; 
+        state[i][j] = !game_turn;
+        auto temp_score = min_search(state, depth-1, alpha, beta);
+        // std::cout << temp_score << std::endl;
+        if(temp_score < beta)
+          beta = temp_score;
         
-        if(best_score > beta)
+        if(beta <= alpha) {
           state[i][j] = -1;
-          return beta;
-
+          return alpha;
+        }
         state[i][j] = -1;
       }
     }
   }
-  return best_score;
+  return beta;
 }
 
 std::tuple<int,int> minimax(int (&state)[GRID_SIZE][GRID_SIZE],int depth)
 {
-  int best_score = INT32_MAX;
   std::tuple<int,int> best_move;
   auto alpha = INT32_MIN;
   auto beta = INT32_MAX;
+
   for(auto i = 0; i < GRID_SIZE; ++i){
     for(auto j = 0; j < GRID_SIZE; ++j) {
       if(state[i][j] == -1) {
-        state[i][j] = AI;
+        // std::cout << "minimax = [" << i << "][" << j << "]" << std::endl; 
+        state[i][j] = game_turn;
         auto temp_score = max_search(state, depth-1, alpha, beta);
-        if(temp_score < best_score) {
-          best_score = temp_score;
-          best_move = std::tuple<int,int>(i, j);
+        // std::cout << temp_score << std::endl;
+        if(temp_score > alpha) {
+          alpha = temp_score;
+          std::get<0>(best_move) = i;
+          std::get<1>(best_move) = j;
+          // std::cout << "i = " << std::get<0>(best_move) << std::endl;
+          // std::cout << "j = " << std::get<1>(best_move) << std::endl;
         }
         state[i][j] = -1;
       }
@@ -380,26 +400,59 @@ std::tuple<int,int> minimax(int (&state)[GRID_SIZE][GRID_SIZE],int depth)
   return best_move;
 }
 
+std::tuple<int,int> teste()
+{
+  return std::tuple<int, int>(0,5);
+}
+
+
+void game_core(){
+  print_grid(grid);
+  while(true){
+    std::tuple<int,int> play = minimax(grid, 3);
+    grid[std::get<0>(play)][std::get<1>(play)] = game_turn;
+    if (check_winner(game_turn))
+      break;
+    game_turn = game_turn == 0 ? 1:0;
+    system("clear");
+    print_grid(grid);
+  }
+  system("clear");
+  print_grid(grid);
+}
+
 int main()
 {
+  // ------GRID INIT------------
   populate_grid();
-  std::cout << std::boolalpha << std::endl;
 
-  auto t_start = std::chrono::high_resolution_clock::now();
+  // for(auto i = 0; i < 3; ++i) {
+  //   for(auto j = 0; j < 3; ++j) {
+  //       grid[i][j] = -1;
+  //     }
+  // }
+  // grid[0][0] = 0;
+  // grid[2][2] = 0;
+  // // ---------------------------
 
-  auto tuple = minimax(grid, 1);
-  std::cout <<  "X = "<< std::get<0>(tuple) << std::endl
-            <<  "Y = "<< std::get<1>(tuple) << std::endl;
+  // std::cout << std::boolalpha << std::endl;
 
-  std::cout <<  "GRADE = " << evaluate(grid, AI) << std::endl;
-  std::cout <<  "WIN = " << check_winner(AI) << std::endl;
-  std::cout << count << std::endl;
-  print_grid(grid);
-  auto t_end = std::chrono::high_resolution_clock::now();
+  // auto t_start = std::chrono::high_resolution_clock::now();
 
+  // auto tuple = minimax(grid, 4);
+  // std::cout <<  "\ni = "<< std::get<0>(tuple) << std::endl
+  //           <<  "j = "<< std::get<1>(tuple) << std::endl;
 
-  std::cout << "grid: "
-            << std::chrono::duration<double, std::milli>(t_end-t_start).count()
-            << " ms\n";
- 
+  // std::cout <<  "GRADE = " << std::abs(evaluate(grid, AI,1) - evaluate(grid, PLAYER_0,1)) << std::endl;
+  // std::cout <<  "GRADE_AI = " << evaluate(grid, AI,1) << std::endl;
+  // std::cout <<  "GRADE_P0 = " << evaluate(grid, PLAYER_0,1) << std::endl;
+  // std::cout << g_count << std::endl;
+  // auto t_end = std::chrono::high_resolution_clock::now();
+
+  // print_grid(grid);
+  // std::cout << "grid: "
+  //           << std::chrono::duration<double, std::milli>(t_end-t_start).count()
+  //           << " ms\n"; 
+
+  game_core();
 }
