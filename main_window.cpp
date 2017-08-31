@@ -11,6 +11,7 @@ MainWindow::MainWindow()
   set_border_width(16);
   add(*v_box);
   // set_resizable(false);
+  mode = H_VS_H;
 }
 
 MainWindow::~MainWindow()
@@ -19,9 +20,9 @@ MainWindow::~MainWindow()
   // delete btn_human_vs_human;
   // delete btn_human_vs_computer;
   // delete btn_computer_vs_computer;
-  for (auto i = 0; i < GomokuCore::GRID_SIZE; ++i)
+  for (auto i = 0; i < GRID_SIZE; ++i)
   {
-    for (auto j = 0; j < GomokuCore::GRID_SIZE; ++j)
+    for (auto j = 0; j < GRID_SIZE; ++j)
     {
       delete btn_grid[i][j];
     }
@@ -40,13 +41,40 @@ void MainWindow::on_grid_button_clicked(int x, int y, Gtk::Button* clicked_butto
     return;
   }
 
-  if(gomoku_core -> compute_play(x,y)) {   
-    if(gomoku_core -> have_winner(x, y)){
-      lbl_info -> set_label("Player " + std::to_string(gomoku_core -> player_turn() + 1) + " wins");
-      label = (gomoku_core -> player_turn() == P1) ? "O" : "X";
-      clicked_button -> set_label(label);
-      return;
-    }
+  if(mode != IA_VS_IA){
+	  if(gomoku_core -> compute_play(x,y)) {
+		if(gomoku_core -> game_over()){
+	      gomoku_core -> game_state(END_GAME);
+		  lbl_info -> set_label("Player " + std::to_string(gomoku_core -> player_turn() + 1) + " wins");
+		  label = (gomoku_core -> player_turn() == P1) ? "O" : "X";
+		  clicked_button -> set_label(label);
+		  return;
+		}
+  }
+  label = (gomoku_core -> player_turn() == P1) ? "O" : "X";
+  clicked_button -> set_label(label);
+
+  gomoku_core -> change_turn();
+  lbl_info -> set_label("Player " + std::to_string(gomoku_core -> player_turn() + 1) + " turn");
+
+  if(mode == H_VS_IA){
+	 std::tuple<int,int> play = gomoku_core -> minimax(4);
+     if(gomoku_core -> compute_play(std::get<0>(play), std::get<1>(play))){
+	    if (gomoku_core -> game_over()){
+	    	  gomoku_core -> game_state(END_GAME);
+			  lbl_info -> set_label("Player " + std::to_string(gomoku_core -> player_turn() + 1) + " wins");
+			  label = (gomoku_core -> player_turn() == P1) ? "O" : "X";
+			  btn_grid[std::get<0>(play)][std::get<1>(play)] -> set_label(label);
+	    } else{
+			  label = (gomoku_core -> player_turn() == P1) ? "O" : "X";
+		      btn_grid[std::get<0>(play)][std::get<1>(play)] -> set_label(label);
+	    	  gomoku_core -> change_turn();
+		      lbl_info -> set_label("Player " + std::to_string(gomoku_core -> player_turn() + 1) + " turn");
+	    }
+     }
+   }
+
+    /*
     if(!plays_to_paint.empty()) {
       for(auto play:plays_to_paint){
 
@@ -62,12 +90,8 @@ void MainWindow::on_grid_button_clicked(int x, int y, Gtk::Button* clicked_butto
         btn_grid[play.x()][play.y()] -> set_label("-");
         btn_grid[play.x()][play.y()] -> override_color(Gdk::RGBA("red"));
       }
-    }
-    label = (gomoku_core -> player_turn() == P1) ? "O" : "X";
-    clicked_button -> set_label(label);
+    }*/
 
-    gomoku_core -> change_turn();
-    lbl_info -> set_label("Player " + std::to_string(gomoku_core -> player_turn() + 1) + " turn");
   }
 
 }
@@ -78,8 +102,8 @@ void MainWindow::on_restart_button_clicked(Gtk::Button* clicked_button)
   lbl_info -> set_label("Player " + std::to_string(gomoku_core -> player_turn() + 1) + " turn");
 
   std::string label;
-  for(auto i = 0; i < GomokuCore::GRID_SIZE; ++i){
-    for(auto j = 0; j < GomokuCore::GRID_SIZE; ++j){
+  for(auto i = 0; i < GRID_SIZE; ++i){
+    for(auto j = 0; j < GRID_SIZE; ++j){
       //label = std::to_string(i) + "," + std::to_string(j);
       label = "    ";
       btn_grid[i][j] -> set_label(label);
@@ -88,14 +112,50 @@ void MainWindow::on_restart_button_clicked(Gtk::Button* clicked_button)
 
 }
 
+void MainWindow::on_human_vs_human_button_clicked(Gtk::Button* clicked_button)
+{
+	if(gomoku_core -> game_state() == NEW_GAME)
+		mode = H_VS_H;
+}
+
+void MainWindow::on_human_vs_computer_button_clicked(Gtk::Button* clicked_button)
+{
+	if(gomoku_core -> game_state() == NEW_GAME)
+		mode = H_VS_IA;
+}
+
+void MainWindow::on_computer_vs_computer_button_clicked(Gtk::Button* clicked_button)
+{
+	std::string label;
+
+	if(gomoku_core -> game_state() == NEW_GAME)
+		mode = IA_VS_IA;
+	while(true){
+		 std::tuple<int,int> play = gomoku_core -> minimax(3);
+	     if(gomoku_core -> compute_play(std::get<0>(play), std::get<1>(play))){
+		    if (gomoku_core -> game_over()){
+				  lbl_info -> set_label("Player " + std::to_string(gomoku_core -> player_turn() + 1) + " wins");
+				  label = (gomoku_core -> player_turn() == P1) ? "O" : "X";
+				  btn_grid[std::get<0>(play)][std::get<1>(play)] -> set_label(label);
+				  break;
+		    } else{
+			      lbl_info -> set_label("Player " + std::to_string(gomoku_core -> player_turn() + 1) + " turn");
+				  label = (gomoku_core -> player_turn() == P1) ? "O" : "X";
+			      btn_grid[std::get<0>(play)][std::get<1>(play)] -> set_label(label);
+		    }
+			 gomoku_core -> change_turn();
+	     }
+	}
+}
+
 void MainWindow::load_grid()
 {
   grid = Gtk::manage(new Gtk::Grid());
 
   std::string label;
-  for (auto i = 0; i < GomokuCore::GRID_SIZE; ++i) {
+  for (auto i = 0; i < GRID_SIZE; ++i) {
     if(i){
-      label = /*"    "; */std::to_string(i) + "," + "0";
+      label = "    "; //std::to_string(i) + "," + "0";
       btn_grid[i][0] = Gtk::manage(new Gtk::Button(label));
       btn_grid[i][0] -> signal_clicked().connect(
         sigc::bind<int>(
@@ -108,7 +168,7 @@ void MainWindow::load_grid()
       grid -> attach_next_to(*btn_grid[i][0], *btn_grid[i-1][0], Gtk::POS_BOTTOM, 1, 1);
       btn_grid[i][0] -> show();
     } else {
-      label = /*"    "; */std::to_string(i) + "," + "0";
+      label = "    "; //std::to_string(i) + "," + "0";
       btn_grid[i][0] = Gtk::manage(new Gtk::Button(label));
       btn_grid[i][0] -> signal_clicked().connect(
         sigc::bind<int>(
@@ -120,9 +180,9 @@ void MainWindow::load_grid()
       grid -> attach_next_to(*btn_grid[i][0], Gtk::POS_RIGHT, 1, 1);
       btn_grid[i][0] -> show();
     }
-    for (auto j = 0; j < GomokuCore::GRID_SIZE; ++j) {
+    for (auto j = 0; j < GRID_SIZE; ++j) {
       if(j) {
-        label = /*"    "; */std::to_string(i) + "," + std::to_string(j);
+        label = "    "; //std::to_string(i) + "," + std::to_string(j);
         btn_grid[i][j] = Gtk::manage(new Gtk::Button(label));
         btn_grid[i][j] -> signal_clicked().connect(
           sigc::bind<int>(
@@ -163,22 +223,28 @@ void MainWindow::load_buttons()
   // btn_restart -> override_color(Gdk::RGBA("red"));
   btn_restart -> show();
 
-  // btn_human_vs_human = Gtk::manage(new Gtk::Button("vs Human"));
+  btn_human_vs_human = Gtk::manage(new Gtk::Button("vs Human"));
+  btn_human_vs_human -> signal_clicked().connect(sigc::bind<Gtk::Button*>(
+              sigc::mem_fun(*this, &MainWindow::on_human_vs_human_button_clicked), btn_human_vs_human));
 
-  // btn_human_vs_human -> show();
+  btn_human_vs_human -> show();
 
-  // btn_human_vs_computer = Gtk::manage(new Gtk::Button("vs IA"));
+  btn_human_vs_computer = Gtk::manage(new Gtk::Button("vs IA"));
+  btn_human_vs_computer -> signal_clicked().connect(sigc::bind<Gtk::Button*>(
+              sigc::mem_fun(*this, &MainWindow::on_human_vs_computer_button_clicked), btn_human_vs_computer));
 
-  // btn_human_vs_computer -> show();
+  btn_human_vs_computer -> show();
 
-  // btn_computer_vs_computer = Gtk::manage(new Gtk::Button("IA vs IA"));
+  btn_computer_vs_computer = Gtk::manage(new Gtk::Button("IA vs IA"));
+  btn_computer_vs_computer -> signal_clicked().connect(sigc::bind<Gtk::Button*>(
+              sigc::mem_fun(*this, &MainWindow::on_computer_vs_computer_button_clicked), btn_computer_vs_computer));
 
-  // btn_computer_vs_computer -> show();
+  btn_computer_vs_computer -> show();
 
   h_box -> pack_start(*btn_restart);
-  // h_box -> pack_start(*btn_human_vs_human);
-  // h_box -> pack_start(*btn_human_vs_computer);
-  // h_box -> pack_start(*btn_computer_vs_computer);
+  h_box -> pack_start(*btn_human_vs_human);
+  h_box -> pack_start(*btn_human_vs_computer);
+  h_box -> pack_start(*btn_computer_vs_computer);
 
   lbl_info = Gtk::manage(new Gtk::Label("Player " + std::to_string(gomoku_core -> player_turn() + 1) + " turn"));
   lbl_info -> show();

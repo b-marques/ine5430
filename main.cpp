@@ -24,11 +24,11 @@ int main (int argc, char *argv[])
 
   // for (auto it = player.plays().begin(); it != player.plays().end(); ++it)
   //   std::cout << " " << it -> x();
- 
+
   auto app = Gtk::Application::create(argc, argv, "ine5430.gomoku");
-  
+
   MainWindow main_window;
- 
+
   //Shows the window and returns   when it is closed.
   return app->run(main_window);
 }
