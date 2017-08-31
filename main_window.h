@@ -4,6 +4,12 @@
 #include <gtkmm.h>
 #include "gomoku_core.h"
 
+enum GameMode{
+	H_VS_H,
+	H_VS_IA,
+	IA_VS_IA
+};
+
 class MainWindow : public Gtk::Window
 {
 
@@ -20,6 +26,10 @@ private:
   //Signal handlers:
   void on_grid_button_clicked(int x, int y, Gtk::Button* clicked_button);
   void on_restart_button_clicked(Gtk::Button* clicked_button);
+  void on_human_vs_human_button_clicked(Gtk::Button* clicked_button);
+  void on_human_vs_computer_button_clicked(Gtk::Button* clicked_button);
+  void on_computer_vs_computer_button_clicked(Gtk::Button* clicked_button);
+
 
   // Game control
   GomokuCore* gomoku_core;
@@ -34,7 +44,10 @@ private:
   Gtk::Box* v_box;
   Gtk::Box* h_box;
   Gtk::Grid* grid;
-  Gtk::Button* btn_grid[GomokuCore::GRID_SIZE][GomokuCore::GRID_SIZE];
+  Gtk::Button* btn_grid[GRID_SIZE][GRID_SIZE];
+
+  //Game mode
+  GameMode mode;
 };
 
 #endif // MAINWINDOW_H
