@@ -371,7 +371,7 @@ int GomokuCore::evaluate_incremental(int x, int y, int (&grid)[GRID_SIZE][GRID_S
 int GomokuCore::min_search(int (&state)[GRID_SIZE][GRID_SIZE], int depth, int alpha, int beta, int last_grade)
 {
   int new_grade;
-  if(depth == 0 || abs(last_grade) > at_least_1_quintuple) {
+  if(depth == 0 || abs(last_grade) >= at_least_1_quintuple) {
     // std::cout << "minevaluate" << std::endl;
     //return evaluate(state, game_turn, 1) - evaluate(state, !game_turn, 1);
 	/*int old_way = evaluate(state, game_turn, 1) - evaluate(state, !game_turn, 1);
@@ -408,7 +408,7 @@ int GomokuCore::max_search(int (&state)[GRID_SIZE][GRID_SIZE], int depth, int al
 {
   int new_grade;
 
-  if(depth == 0 || abs(last_grade) > at_least_1_quintuple) {
+  if(depth == 0 || abs(last_grade) >= at_least_1_quintuple) {
     // std::cout << "maxevaluate" << std::endl;
     //return evaluate(state, game_turn, 1) - evaluate(state, !game_turn, 1);
 	/*int old_way = evaluate(state, game_turn, 1) - evaluate(state, !game_turn, 1);
