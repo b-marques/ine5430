@@ -7,54 +7,54 @@
 #include <tuple>
 
 enum GameState {
-  NEW_GAME = 0,
-  IN_GAME,
-  END_GAME,
+	NEW_GAME = 0, IN_GAME, END_GAME,
 };
 
 enum PlayerTurn {
-  P1 = 0,
-  P2 = 1,
+	P1 = 0, P2 = 1,
 };
 
-class GomokuCore
-{
+class GomokuCore {
 public:
-  static GomokuCore* instance();
-  ~GomokuCore();  
-  void restart();
-  void change_turn();
-  bool compute_play(int x, int y);
-  bool have_winner(int player);
-  bool game_over();
-  PlayerTurn player_turn();
-  GameState game_state();
-  std::tuple<int,int> minimax(int depth);
-  void game_state(GameState state);
+	static GomokuCore* instance();
+	~GomokuCore();
+	void restart();
+	void change_turn();
+	bool compute_play(int x, int y);
+	bool have_winner(int player);
+	bool game_over();
+	PlayerTurn player_turn();
+	GameState game_state();
+	std::tuple<int, int> minimax(int depth);
+	void game_state(GameState state);
 
 private:
-  GomokuCore();
-  static GomokuCore* _instance;
-  void update_grid(int x, int y);
-  void populate_grid();
-  int evaluate_incremental(int x, int y, int (&grid)[GRID_SIZE][GRID_SIZE], int turn);
-  void treats_sequence_incremental(int& add_to_grade, int* sequence, int seq_size,
-		  int play_position, int turn);
-  void evaluate_sequence(int& n_unities_open, int&	n_doubles_open,
-  		int& n_triples_open, int& n_quadruples_open, int& n_quintuples,
-  		int sequence, int n_opens);
-  int max_search(int (&state)[GRID_SIZE][GRID_SIZE], int depth, int alpha, int beta, int last_grade);
-  int min_search(int (&state)[GRID_SIZE][GRID_SIZE], int depth, int alpha, int beta, int last_grade);
-  int evaluate(int (&grid)[GRID_SIZE][GRID_SIZE], int turn, int depth);
-  void treats_sequence(int (&grid)[GRID_SIZE][GRID_SIZE],
-		const int i, const int j, int turn, int& sequence, int& n_opens,
-  		int& last_position, int& n_unities_open, int& n_doubles_open,
-  		int& n_triples_open, int& n_quadruples_open, int& n_quintuples, bool reached_grid_limit);
+	GomokuCore();
+	static GomokuCore* _instance;
+	void update_grid(int x, int y);
+	void populate_grid();
+	int evaluate_incremental(int x, int y, int (&grid)[GRID_SIZE][GRID_SIZE],
+			int turn);
+	void treats_sequence_incremental(int& add_to_grade, int* sequence,
+			int seq_size, int play_position, int turn);
+	void evaluate_sequence(int& n_unities_open, int& n_doubles_open,
+			int& n_triples_open, int& n_quadruples_open, int& n_quintuples,
+			int sequence, int n_opens);
+	int max_search(int (&state)[GRID_SIZE][GRID_SIZE], int depth, int alpha,
+			int beta, int last_grade);
+	int min_search(int (&state)[GRID_SIZE][GRID_SIZE], int depth, int alpha,
+			int beta, int last_grade);
+	int evaluate(int (&grid)[GRID_SIZE][GRID_SIZE], int turn, int depth);
+	void treats_sequence(int (&grid)[GRID_SIZE][GRID_SIZE], const int i,
+			const int j, int turn, int& sequence, int& n_opens,
+			int& last_position, int& n_unities_open, int& n_doubles_open,
+			int& n_triples_open, int& n_quadruples_open, int& n_quintuples,
+			bool reached_grid_limit);
 
-  int _grid[GRID_SIZE][GRID_SIZE];
-  PlayerTurn _player_turn;
-  GameState _game_state;
-  GomokuPlayer _player[2];
+	int _grid[GRID_SIZE][GRID_SIZE];
+	PlayerTurn _player_turn;
+	GameState _game_state;
+	GomokuPlayer _player[2];
 };
 
 #endif // GOMOKU_CORE_H
