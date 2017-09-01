@@ -4,6 +4,7 @@
 #include <gtkmm.h>
 #include "gomoku_core.h"
 #include <thread>
+#include <glibmm/thread.h>
 
 enum GameMode {
 	H_VS_H, H_VS_IA, IA_VS_IA
@@ -16,7 +17,8 @@ public:
 	~MainWindow();
 
 private:
-	std::thread *ia_thread;
+	//std::thread *ia_thread;
+	Glib::Thread *ia_vs_ia_thread;
 	//GUI Building
 	void load_grid();
 	void load_box_layout();
@@ -29,6 +31,7 @@ private:
 	void on_human_vs_computer_button_clicked(Gtk::Button* clicked_button);
 	void on_computer_vs_computer_button_clicked(Gtk::Button* clicked_button);
 	void on_computer_vs_human_button_clicked(Gtk::Button* clicked_button);
+	void on_next_play(Gtk::Button* clicked_button);
 	void ia_vs_ia();
 
 	// Game control
@@ -41,6 +44,7 @@ private:
 	Gtk::Button* btn_human_vs_computer;
 	Gtk::Button* btn_computer_vs_computer;
 	Gtk::Button* btn_computer_vs_human;
+	Gtk::Button* btn_next_ia_play;
 	Gtk::Label* lbl_info;
 	Gtk::Label* lbl_iteracoes;
 	Gtk::Box* v_box;

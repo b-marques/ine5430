@@ -9,6 +9,8 @@ GomokuCore::GomokuCore() :
 		_player_turn(P1), _game_state(NEW_GAME) {
 	_player[0] = GomokuPlayer();
 	_player[1] = GomokuPlayer();
+	_up_board_plays = 0;
+	_down_board_plays = 0;
 	populate_grid();
 }
 
@@ -28,6 +30,8 @@ void GomokuCore::restart() {
 	_player_turn = P1;
 	_player[P1].clear_plays();
 	_player[P2].clear_plays();
+	_up_board_plays = 0;
+	_down_board_plays = 0;
 	populate_grid();
 }
 
@@ -45,7 +49,10 @@ bool GomokuCore::compute_play(int x, int y) {
 
 	_player[_player_turn].play(x, y);
 	update_grid(x, y);
-
+	if(x < 8)
+		_up_board_plays++;
+	else
+		_down_board_plays++;
 	return true;
 }
 
@@ -353,30 +360,23 @@ int GomokuCore::evaluate_incremental(int x, int y,
 	return add_to_grade;
 }
 
-int GomokuCore::min_search(int (&state)[GRID_SIZE][GRID_SIZE], int depth,
+int GomokuCore::min_search_updown(int (&state)[GRID_SIZE][GRID_SIZE], int depth,
 		int alpha, int beta, int last_grade, int added_to_grade) {
 	int new_grade, add_to_grade;
 	if (depth == 0 || abs(added_to_grade) >= at_least_1_quintuple) {
-		// std::cout << "minevaluate" << std::endl;
-		//return evaluate(state, game_turn, 1) - evaluate(state, !game_turn, 1);
-		/*int old_way = evaluate(state, game_turn, 1) - evaluate(state, !game_turn, 1);
-		 if(old_way != last_grade)
-		 new_grade = 20;*/
 		return last_grade;
 	}
 
-	for (auto i = 0; i < GRID_SIZE; ++i) {
+	for (auto i = GRID_SIZE_M_1; i > -1 ; --i) {
 		for (auto j = 0; j < GRID_SIZE; ++j) {
 			if (state[i][j] == -1) {
 				_conta_iteracoes++;
 				new_grade = last_grade;
-				// std::cout << "min = [" << i << "][" << j << "]" << std::endl;
 				state[i][j] = _player_turn;
 				add_to_grade = evaluate_incremental(i, j, state, _player_turn);
 				new_grade += add_to_grade;
-				auto temp_score = max_search(state, depth - 1, alpha, beta,
+				auto temp_score = max_search_updown(state, depth - 1, alpha, beta,
 						new_grade, add_to_grade);
-				// std::cout << temp_score << std::endl;
 				if (temp_score > alpha)
 					alpha = temp_score;
 
@@ -392,16 +392,11 @@ int GomokuCore::min_search(int (&state)[GRID_SIZE][GRID_SIZE], int depth,
 	return alpha;
 }
 
-int GomokuCore::max_search(int (&state)[GRID_SIZE][GRID_SIZE], int depth,
+int GomokuCore::max_search_updown(int (&state)[GRID_SIZE][GRID_SIZE], int depth,
 		int alpha, int beta, int last_grade, int added_to_grade) {
 	int new_grade, add_to_grade;
 
 	if (depth == 0 || abs(added_to_grade) >= at_least_1_quintuple) {
-		// std::cout << "maxevaluate" << std::endl;
-		//return evaluate(state, game_turn, 1) - evaluate(state, !game_turn, 1);
-		/*int old_way = evaluate(state, game_turn, 1) - evaluate(state, !game_turn, 1);
-		 if(old_way != last_grade)
-		 new_grade = 20;*/
 		return last_grade;
 	}
 	for (auto i = 0; i < GRID_SIZE; ++i) {
@@ -409,13 +404,11 @@ int GomokuCore::max_search(int (&state)[GRID_SIZE][GRID_SIZE], int depth,
 			if (state[i][j] == -1) {
 				_conta_iteracoes++;
 				new_grade = last_grade;
-				// std::cout << "max = [" << i << "][" << j << "]" << std::endl;
 				state[i][j] = !_player_turn;
 				add_to_grade = evaluate_incremental(i, j, state, !_player_turn);
 				new_grade -= add_to_grade;
-				auto temp_score = min_search(state, depth - 1, alpha, beta,
+				auto temp_score = min_search_updown(state, depth - 1, alpha, beta,
 						new_grade, add_to_grade);
-				// std::cout << temp_score << std::endl;
 				if (temp_score < beta)
 					beta = temp_score;
 
@@ -430,7 +423,7 @@ int GomokuCore::max_search(int (&state)[GRID_SIZE][GRID_SIZE], int depth,
 	return beta;
 }
 
-std::tuple<int, int> GomokuCore::minimax(int depth) {
+std::tuple<int, int> GomokuCore::minimax_updown(int depth) {
 	std::tuple<int, int> best_move;
 	auto alpha = INT32_MIN;
 	auto beta = INT32_MAX;
@@ -445,7 +438,7 @@ std::tuple<int, int> GomokuCore::minimax(int depth) {
 				_grid[i][j] = _player_turn;
 				add_to_grade = evaluate_incremental(i, j, _grid, _player_turn);
 				new_grade += add_to_grade;
-				auto temp_score = max_search(_grid, depth - 1, alpha, beta,
+				auto temp_score = max_search_updown(_grid, depth - 1, alpha, beta,
 						new_grade, add_to_grade);
 				// std::cout << temp_score << std::endl;
 				if (temp_score > alpha) {
@@ -460,6 +453,108 @@ std::tuple<int, int> GomokuCore::minimax(int depth) {
 		}
 	}
 	return best_move;
+}
+
+int GomokuCore::min_search_downup(int (&state)[GRID_SIZE][GRID_SIZE], int depth,
+		int alpha, int beta, int last_grade, int added_to_grade) {
+	int new_grade, add_to_grade;
+	if (depth == 0 || abs(added_to_grade) >= at_least_1_quintuple) {
+		return last_grade;
+	}
+
+	for (auto i = 0; i < GRID_SIZE; ++i) {
+		for (auto j = 0; j < GRID_SIZE; ++j) {
+			if (state[i][j] == -1) {
+				_conta_iteracoes++;
+				new_grade = last_grade;
+				state[i][j] = _player_turn;
+				add_to_grade = evaluate_incremental(i, j, state, _player_turn);
+				new_grade += add_to_grade;
+				auto temp_score = max_search_downup(state, depth - 1, alpha, beta,
+						new_grade, add_to_grade);
+				if (temp_score > alpha)
+					alpha = temp_score;
+
+				if (alpha >= beta) {
+					state[i][j] = -1;
+					return beta;
+				}
+
+				state[i][j] = -1;
+			}
+		}
+	}
+	return alpha;
+}
+
+int GomokuCore::max_search_downup(int (&state)[GRID_SIZE][GRID_SIZE], int depth,
+		int alpha, int beta, int last_grade, int added_to_grade) {
+	int new_grade, add_to_grade;
+
+	if (depth == 0 || abs(added_to_grade) >= at_least_1_quintuple) {
+		return last_grade;
+	}
+	for (auto i = GRID_SIZE_M_1; i > -1 ; --i) {
+		for (auto j = 0; j < GRID_SIZE; ++j) {
+			if (state[i][j] == -1) {
+				_conta_iteracoes++;
+				new_grade = last_grade;
+				state[i][j] = !_player_turn;
+				add_to_grade = evaluate_incremental(i, j, state, !_player_turn);
+				new_grade -= add_to_grade;
+				auto temp_score = min_search_downup(state, depth - 1, alpha, beta,
+						new_grade, add_to_grade);
+				if (temp_score < beta)
+					beta = temp_score;
+
+				if (beta <= alpha) {
+					state[i][j] = -1;
+					return alpha;
+				}
+				state[i][j] = -1;
+			}
+		}
+	}
+	return beta;
+}
+
+std::tuple<int, int> GomokuCore::minimax_downup(int depth) {
+	std::tuple<int, int> best_move;
+	auto alpha = INT32_MIN;
+	auto beta = INT32_MAX;
+	int new_grade = 0, add_to_grade, initial_grade = evaluate(_grid, _player_turn, depth);
+
+	for (auto i = GRID_SIZE_M_1; i > -1 ; --i) {
+		for (auto j = 0; j < GRID_SIZE; ++j) {
+			if (_grid[i][j] == -1) {
+				_conta_iteracoes++;
+				// std::cout << "minimax = [" << i << "][" << j << "]" << std::endl;
+				new_grade = initial_grade;
+				_grid[i][j] = _player_turn;
+				add_to_grade = evaluate_incremental(i, j, _grid, _player_turn);
+				new_grade += add_to_grade;
+				auto temp_score = max_search_downup(_grid, depth - 1, alpha, beta,
+						new_grade, add_to_grade);
+				// std::cout << temp_score << std::endl;
+				if (temp_score > alpha) {
+					alpha = temp_score;
+					std::get < 0 > (best_move) = i;
+					std::get < 1 > (best_move) = j;
+					// std::cout << "i = " << std::get<0>(best_move) << std::endl;
+					// std::cout << "j = " << std::get<1>(best_move) << std::endl;
+				}
+				_grid[i][j] = -1;
+			}
+		}
+	}
+	return best_move;
+}
+
+std::tuple<int, int> GomokuCore::minimax(int depth){
+	if(_up_board_plays > _down_board_plays)
+		return minimax_updown(depth);
+	else
+		return minimax_downup(depth);
 }
 
 void GomokuCore::game_state(GameState state) {

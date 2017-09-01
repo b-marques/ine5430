@@ -41,9 +41,15 @@ private:
 	void evaluate_sequence(int& n_unities_open, int& n_doubles_open,
 			int& n_triples_open, int& n_quadruples_open, int& n_quintuples,
 			int sequence, int n_opens);
-	int max_search(int (&state)[GRID_SIZE][GRID_SIZE], int depth,
+	std::tuple<int, int> minimax_updown(int depth);
+	std::tuple<int, int> minimax_downup(int depth);
+	int max_search_updown(int (&state)[GRID_SIZE][GRID_SIZE], int depth,
 			int alpha, int beta, int last_grade, int added_to_grade);
-	int min_search(int (&state)[GRID_SIZE][GRID_SIZE], int depth,
+	int max_search_downup(int (&state)[GRID_SIZE][GRID_SIZE], int depth,
+			int alpha, int beta, int last_grade, int added_to_grade);
+	int min_search_updown(int (&state)[GRID_SIZE][GRID_SIZE], int depth,
+			int alpha, int beta, int last_grade, int added_to_grade);
+	int min_search_downup(int (&state)[GRID_SIZE][GRID_SIZE], int depth,
 			int alpha, int beta, int last_grade, int added_to_grade);
 	int evaluate(int (&grid)[GRID_SIZE][GRID_SIZE], int turn, int depth);
 	void treats_sequence(int (&grid)[GRID_SIZE][GRID_SIZE], const int i,
@@ -57,6 +63,8 @@ private:
 	GameState _game_state;
 	GomokuPlayer _player[2];
 	int _conta_iteracoes;
+	int _up_board_plays;
+	int _down_board_plays;
 };
 
 #endif // GOMOKU_CORE_H
