@@ -142,15 +142,15 @@ void MainWindow::ia_vs_ia() {
 			btn_grid[std::get < 0 > (play)][std::get < 1 > (play)]->set_label(
 					label);
 		} else {
-			lbl_info->set_label(
-					"Player " + std::to_string(gomoku_core->player_turn() + 1)
-							+ " turn");
 			label = (gomoku_core->player_turn() == P1) ? "O" : "X";
 			btn_grid[std::get < 0 > (play)][std::get < 1 > (play)]->set_label(
 					label);
+			gomoku_core->change_turn();
+			lbl_info->set_label(
+					"Player " + std::to_string(gomoku_core->player_turn() + 1)
+							+ " turn");
 
 		}
-		gomoku_core->change_turn();
 	}
 }
 
