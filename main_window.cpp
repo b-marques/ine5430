@@ -58,6 +58,7 @@ void MainWindow::on_grid_button_clicked(int x, int y,
 
 			if (mode == H_VS_IA) {
 				std::tuple<int, int> play = gomoku_core->minimax(4);
+				lbl_iteracoes->set_label("Iteracoes: " + std::to_string(gomoku_core -> conta_iteracoes()));
 				if (gomoku_core->compute_play(std::get < 0 > (play),
 						std::get < 1 > (play))) {
 					if (gomoku_core->game_over()) {
@@ -117,14 +118,12 @@ void MainWindow::on_human_vs_computer_button_clicked(
 		mode = H_VS_IA;
 }
 
-void MainWindow::on_computer_vs_computer_button_clicked(
-		Gtk::Button* clicked_button) {
+void MainWindow::ia_vs_ia(){
 	std::string label;
 
-	if (gomoku_core->game_state() == NEW_GAME)
-		mode = IA_VS_IA;
 	while (true) {
-		std::tuple<int, int> play = gomoku_core->minimax(3);
+		std::tuple<int, int> play = gomoku_core->minimax(4);
+		lbl_iteracoes->set_label("Iteracoes: " + std::to_string(gomoku_core -> conta_iteracoes()));
 		if (gomoku_core->compute_play(std::get < 0 > (play),
 				std::get < 1 > (play))) {
 			if (gomoku_core->game_over()) {
@@ -145,10 +144,21 @@ void MainWindow::on_computer_vs_computer_button_clicked(
 				label = (gomoku_core->player_turn() == P1) ? "O" : "X";
 				btn_grid[std::get < 0 > (play)][std::get < 1 > (play)]->set_label(
 						label);
+
 			}
 			gomoku_core->change_turn();
 		}
 	}
+}
+
+void MainWindow::on_computer_vs_computer_button_clicked(
+		Gtk::Button* clicked_button) {
+
+	if (gomoku_core->game_state() == NEW_GAME){
+		mode = IA_VS_IA;
+		ia_thread = new std::thread(&MainWindow::ia_vs_ia, this);
+	}
+
 }
 
 void MainWindow::on_computer_vs_human_button_clicked(
@@ -316,4 +326,10 @@ void MainWindow::load_buttons() {
 							+ " turn"));
 	lbl_info->show();
 	h_box->pack_start(*lbl_info);
+
+	lbl_iteracoes = Gtk::manage(
+			new Gtk::Label("Iteracoes: 0"));
+	lbl_iteracoes->show();
+	h_box->pack_start(*lbl_iteracoes);
 }
+

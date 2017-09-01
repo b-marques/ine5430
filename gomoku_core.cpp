@@ -354,9 +354,9 @@ int GomokuCore::evaluate_incremental(int x, int y,
 }
 
 int GomokuCore::min_search(int (&state)[GRID_SIZE][GRID_SIZE], int depth,
-		int alpha, int beta, int last_grade) {
-	int new_grade;
-	if (depth == 0 || game_over()) {
+		int alpha, int beta, int last_grade, int added_to_grade) {
+	int new_grade, add_to_grade;
+	if (depth == 0 || abs(added_to_grade) >= at_least_1_quintuple) {
 		// std::cout << "minevaluate" << std::endl;
 		//return evaluate(state, game_turn, 1) - evaluate(state, !game_turn, 1);
 		/*int old_way = evaluate(state, game_turn, 1) - evaluate(state, !game_turn, 1);
@@ -368,12 +368,14 @@ int GomokuCore::min_search(int (&state)[GRID_SIZE][GRID_SIZE], int depth,
 	for (auto i = 0; i < GRID_SIZE; ++i) {
 		for (auto j = 0; j < GRID_SIZE; ++j) {
 			if (state[i][j] == -1) {
+				_conta_iteracoes++;
 				new_grade = last_grade;
 				// std::cout << "min = [" << i << "][" << j << "]" << std::endl;
 				state[i][j] = _player_turn;
-				new_grade += evaluate_incremental(i, j, state, _player_turn);
+				add_to_grade = evaluate_incremental(i, j, state, _player_turn);
+				new_grade += add_to_grade;
 				auto temp_score = max_search(state, depth - 1, alpha, beta,
-						new_grade);
+						new_grade, add_to_grade);
 				// std::cout << temp_score << std::endl;
 				if (temp_score > alpha)
 					alpha = temp_score;
@@ -391,10 +393,10 @@ int GomokuCore::min_search(int (&state)[GRID_SIZE][GRID_SIZE], int depth,
 }
 
 int GomokuCore::max_search(int (&state)[GRID_SIZE][GRID_SIZE], int depth,
-		int alpha, int beta, int last_grade) {
-	int new_grade;
+		int alpha, int beta, int last_grade, int added_to_grade) {
+	int new_grade, add_to_grade;
 
-	if (depth == 0 || game_over()) {
+	if (depth == 0 || abs(added_to_grade) >= at_least_1_quintuple) {
 		// std::cout << "maxevaluate" << std::endl;
 		//return evaluate(state, game_turn, 1) - evaluate(state, !game_turn, 1);
 		/*int old_way = evaluate(state, game_turn, 1) - evaluate(state, !game_turn, 1);
@@ -405,12 +407,14 @@ int GomokuCore::max_search(int (&state)[GRID_SIZE][GRID_SIZE], int depth,
 	for (auto i = 0; i < GRID_SIZE; ++i) {
 		for (auto j = 0; j < GRID_SIZE; ++j) {
 			if (state[i][j] == -1) {
+				_conta_iteracoes++;
 				new_grade = last_grade;
 				// std::cout << "max = [" << i << "][" << j << "]" << std::endl;
 				state[i][j] = !_player_turn;
-				new_grade -= evaluate_incremental(i, j, state, !_player_turn);
+				add_to_grade = evaluate_incremental(i, j, state, !_player_turn);
+				new_grade -= add_to_grade;
 				auto temp_score = min_search(state, depth - 1, alpha, beta,
-						new_grade);
+						new_grade, add_to_grade);
 				// std::cout << temp_score << std::endl;
 				if (temp_score < beta)
 					beta = temp_score;
@@ -430,17 +434,19 @@ std::tuple<int, int> GomokuCore::minimax(int depth) {
 	std::tuple<int, int> best_move;
 	auto alpha = INT32_MIN;
 	auto beta = INT32_MAX;
-	int new_grade = 0, initial_grade = evaluate(_grid, _player_turn, depth);
+	int new_grade = 0, add_to_grade, initial_grade = evaluate(_grid, _player_turn, depth);
 
 	for (auto i = 0; i < GRID_SIZE; ++i) {
 		for (auto j = 0; j < GRID_SIZE; ++j) {
 			if (_grid[i][j] == -1) {
+				_conta_iteracoes++;
 				// std::cout << "minimax = [" << i << "][" << j << "]" << std::endl;
 				new_grade = initial_grade;
 				_grid[i][j] = _player_turn;
-				new_grade += evaluate_incremental(i, j, _grid, _player_turn);
+				add_to_grade = evaluate_incremental(i, j, _grid, _player_turn);
+				new_grade += add_to_grade;
 				auto temp_score = max_search(_grid, depth - 1, alpha, beta,
-						new_grade);
+						new_grade, add_to_grade);
 				// std::cout << temp_score << std::endl;
 				if (temp_score > alpha) {
 					alpha = temp_score;
@@ -458,6 +464,12 @@ std::tuple<int, int> GomokuCore::minimax(int depth) {
 
 void GomokuCore::game_state(GameState state) {
 	_game_state = state;
+}
+
+int GomokuCore::conta_iteracoes() {
+	int conta_iteracoes = _conta_iteracoes;
+	_conta_iteracoes = 0;
+	return conta_iteracoes;
 }
 
 void GomokuCore::treats_sequence(int (&grid)[GRID_SIZE][GRID_SIZE], const int i,
