@@ -1,0 +1,27 @@
+Heurisitca:
+
+Com relação à heuristíca a fórmula se manteve. Entretanto foi percebido que o importante são quantas aberturas a sequência possuí e não o simples fato da sequência existir,
+com excção da quintupla, por se tratar do fim do jogo.
+
+Os números abaixo foram gerados a partir de certos preenchimentos do tabuleiro.
+
+n_max_unidades = 113
+n_max_aprox_duplas = 100
+n_max_aprox_triplas = 96
+n_max_aprox_quadruplas = 70
+
+Para o número máximo de unidades, foi suposto um tabuleiro com jogadas intercaladas.
+Para o número máximo de duplas, triplas e quádruplas foram supostos quadrados de tamanho
+respectivamente 2, 3 e 4, a \autoref{estimacao_jogadas} mostra essa estimação para o número máximo de duplas. Foram contados o número de sequências formadas e os valores obtidos foram incrementados por uma certa margem de garantia com o intuito de evitar que uma disposição otimizada das peças no tabuleiro faça com que uma jogada de nível superior tenha menos peso que o máximo de jogadas de um nível inferior, por exemplo, uma dupla contará mais que o máximo de jogadas unitárias.
+
+
+Nota = (n_aberturas_unidade + nMax_unidades*n_aberturas_dupla + nMax_unidades*nMax_aprox_duplas*n_aberturas_tripla + nMax_unidades*nMax_aprox_duplas*nMax_aprox_triplas*n_aberturas_quadrupla + nMax_unidades*nMax_aprox_duplas*nMax_aprox_triplas*nMax_aprox_quadruplas*nQuintuplas) -
+(n_aberturas_unidadeAdversario + nMax_unidades*n_aberturas_duplaAdversario + nMax_unidades*nMax_aprox_duplas*n_aberturas_triplaAdversario + nMax_unidades*nMax_aprox_duplas*nMax_aprox_triplas*n_aberturas_quadruplaAdversario + nMax_unidades*nMax_aprox_duplas*nMax_aprox_triplas*nMax_aprox_quadruplas*nQuintuplasAdversario)
+
+UTILIDADE e HEURÍSTICA = nota
+
+Por questões relacionadas à performance no minimax, calcula-se a nota de um tabuleiro de forma incremental. O primeiro nodo/tabuleiro tem sua nota calculada por completo, ou seja, percorrendo todas as casas e seus filhos tem nota adicionada ou subtraida de acordo com a mudança no tabuleiro em relação ao pai.
+
+Olhando para a figura pai.jpg e considerando que a IA calculará sua jogada o tabuleiro inicialmente possui a nota -8 para ela e ao descer um nivel na árvore é possivel chegar na configuração apresentada na figura filho1.png. Colocando um "X" ao lado do "O", para a IA, uma abertura de unidade é fechada ou seja nota do pai é incrementada em 1. 7 aberturas de unidade em volta do "X" são criadas, somando 7 a nota do pai. O resultado será nota 0 para o tabuleiro.
+
+Supondo mais uma descida na arvore chega-se num nodo MIN. A nota do tabuleiro anterior era 0. Em relação ao jogador "O", jogar ao lado do "X" aumenta em 1 a nota anterior por fechar uma abertura do opnente e ao mesmo tempo o proporciona 7 aberturas de unidade, acrescentando 8 a nota. Logo em relação ao jogador "X" a nota do tabuleiro atual = 0 - 8 = -8.
