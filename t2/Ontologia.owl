@@ -1,0 +1,285 @@
+Prefix(:=<http://www.semanticweb.org/johann/ontologies/2017/8/untitled-ontology-2#>)
+Prefix(owl:=<http://www.w3.org/2002/07/owl#>)
+Prefix(rdf:=<http://www.w3.org/1999/02/22-rdf-syntax-ns#>)
+Prefix(xml:=<http://www.w3.org/XML/1998/namespace>)
+Prefix(xsd:=<http://www.w3.org/2001/XMLSchema#>)
+Prefix(rdfs:=<http://www.w3.org/2000/01/rdf-schema#>)
+
+
+Ontology(<http://www.semanticweb.org/johann/ontologies/2017/8/untitled-ontology-2>
+
+Declaration(Class(:MachineGun))
+Declaration(Class(:anti-Air))
+Declaration(Class(:apc))
+Declaration(Class(:attack_helicopter))
+Declaration(Class(:boat))
+Declaration(Class(:car))
+Declaration(Class(:china))
+Declaration(Class(:conservative_soldier))
+Declaration(Class(:crazy_soldier))
+Declaration(Class(:driver))
+Declaration(Class(:eu))
+Declaration(Class(:gun))
+Declaration(Class(:helicotper))
+Declaration(Class(:human))
+Declaration(Class(:infantry))
+Declaration(Class(:jet))
+Declaration(Class(:map))
+Declaration(Class(:mec))
+Declaration(Class(:men))
+Declaration(Class(:non_soldier_spirit))
+Declaration(Class(:normal_soldier))
+Declaration(Class(:peaceful_soldier))
+Declaration(Class(:pilot))
+Declaration(Class(:pistol))
+Declaration(Class(:rifle))
+Declaration(Class(:soldier))
+Declaration(Class(:soldier_function))
+Declaration(Class(:soldier_spirit))
+Declaration(Class(:spirit))
+Declaration(Class(:tank))
+Declaration(Class(:team))
+Declaration(Class(:terrain))
+Declaration(Class(:transport_helicopter))
+Declaration(Class(:usmc))
+Declaration(Class(:vehicle))
+Declaration(Class(:women))
+Declaration(ObjectProperty(:dont_use_gun))
+Declaration(ObjectProperty(:has_bazuca))
+Declaration(ObjectProperty(:has_knife))
+Declaration(ObjectProperty(:has_pistol))
+Declaration(ObjectProperty(:has_soldier_spirit))
+Declaration(ObjectProperty(:kills))
+Declaration(ObjectProperty(:uses_gun))
+Declaration(NamedIndividual(:Ak-47))
+Declaration(NamedIndividual(:Alessandra))
+Declaration(NamedIndividual(:Bob))
+Declaration(NamedIndividual(:CRAZYYYYY))
+Declaration(NamedIndividual(:Fabio_Conservador))
+Declaration(NamedIndividual(:MenWIthoutSpirit))
+Declaration(NamedIndividual(:MenWithSpirit))
+Declaration(NamedIndividual(:Negev))
+Declaration(NamedIndividual(:Player_Da_Paz))
+Declaration(NamedIndividual(:Ronald))
+Declaration(NamedIndividual(:SoldierSpirit))
+Declaration(NamedIndividual(:USP))
+############################
+#   Object Properties
+############################
+
+# Object Property: :has_bazuca (:has_bazuca)
+
+SubObjectPropertyOf(:has_bazuca :uses_gun)
+
+# Object Property: :has_knife (:has_knife)
+
+SubObjectPropertyOf(:has_knife :uses_gun)
+
+# Object Property: :has_pistol (:has_pistol)
+
+SubObjectPropertyOf(:has_pistol :uses_gun)
+
+# Object Property: :has_soldier_spirit (:has_soldier_spirit)
+
+SubObjectPropertyOf(:has_soldier_spirit owl:topObjectProperty)
+
+# Object Property: :kills (:kills)
+
+SubObjectPropertyOf(:kills owl:topObjectProperty)
+
+# Object Property: :uses_gun (:uses_gun)
+
+SubObjectPropertyOf(:uses_gun owl:topObjectProperty)
+
+
+############################
+#   Classes
+############################
+
+# Class: :MachineGun (:MachineGun)
+
+SubClassOf(:MachineGun :gun)
+DisjointClasses(:MachineGun :pistol)
+DisjointClasses(:MachineGun :rifle)
+
+# Class: :apc (:apc)
+
+SubClassOf(:apc :vehicle)
+
+# Class: :attack_helicopter (:attack_helicopter)
+
+SubClassOf(:attack_helicopter :helicotper)
+
+# Class: :boat (:boat)
+
+SubClassOf(:boat :vehicle)
+
+# Class: :car (:car)
+
+SubClassOf(:car :vehicle)
+
+# Class: :china (:china)
+
+SubClassOf(:china :team)
+
+# Class: :conservative_soldier (:conservative_soldier)
+
+SubClassOf(:conservative_soldier :soldier)
+SubClassOf(:conservative_soldier ObjectAllValuesFrom(:kills :men))
+DisjointClasses(:conservative_soldier :crazy_soldier)
+DisjointClasses(:conservative_soldier :normal_soldier)
+DisjointClasses(:conservative_soldier :peaceful_soldier)
+
+# Class: :crazy_soldier (:crazy_soldier)
+
+SubClassOf(:crazy_soldier :soldier)
+SubClassOf(:crazy_soldier ObjectSomeValuesFrom(:kills :human))
+SubClassOf(:crazy_soldier ObjectMinCardinality(3 :uses_gun :gun))
+DisjointClasses(:crazy_soldier :normal_soldier)
+DisjointClasses(:crazy_soldier :peaceful_soldier)
+
+# Class: :driver (:driver)
+
+SubClassOf(:driver :soldier_function)
+
+# Class: :eu (:eu)
+
+SubClassOf(:eu :team)
+
+# Class: :helicotper (:helicotper)
+
+SubClassOf(:helicotper :vehicle)
+
+# Class: :infantry (:infantry)
+
+SubClassOf(:infantry :soldier_function)
+
+# Class: :jet (:jet)
+
+SubClassOf(:jet :vehicle)
+
+# Class: :mec (:mec)
+
+SubClassOf(:mec :team)
+
+# Class: :men (:men)
+
+SubClassOf(:men :human)
+DisjointClasses(:men :women)
+
+# Class: :non_soldier_spirit (:non_soldier_spirit)
+
+SubClassOf(:non_soldier_spirit :spirit)
+DisjointClasses(:non_soldier_spirit :soldier_spirit)
+
+# Class: :normal_soldier (:normal_soldier)
+
+SubClassOf(:normal_soldier :soldier)
+SubClassOf(:normal_soldier ObjectSomeValuesFrom(:kills :human))
+SubClassOf(:normal_soldier ObjectAllValuesFrom(:uses_gun :pistol))
+DisjointClasses(:normal_soldier :peaceful_soldier)
+
+# Class: :peaceful_soldier (:peaceful_soldier)
+
+SubClassOf(:peaceful_soldier :soldier)
+SubClassOf(:peaceful_soldier ObjectComplementOf(ObjectSomeValuesFrom(:kills :human)))
+SubClassOf(:peaceful_soldier ObjectComplementOf(ObjectSomeValuesFrom(:uses_gun :gun)))
+
+# Class: :pilot (:pilot)
+
+SubClassOf(:pilot :soldier_function)
+
+# Class: :pistol (:pistol)
+
+SubClassOf(:pistol :gun)
+DisjointClasses(:pistol :rifle)
+
+# Class: :rifle (:rifle)
+
+SubClassOf(:rifle :gun)
+
+# Class: :soldier (:soldier)
+
+EquivalentClasses(:soldier ObjectIntersectionOf(:men ObjectSomeValuesFrom(:has_soldier_spirit :soldier_spirit)))
+
+# Class: :soldier_spirit (:soldier_spirit)
+
+SubClassOf(:soldier_spirit :spirit)
+
+# Class: :tank (:tank)
+
+SubClassOf(:tank :vehicle)
+
+# Class: :transport_helicopter (:transport_helicopter)
+
+SubClassOf(:transport_helicopter :helicotper)
+
+# Class: :usmc (:usmc)
+
+SubClassOf(:usmc :team)
+
+# Class: :women (:women)
+
+SubClassOf(:women :human)
+
+
+############################
+#   Named Individuals
+############################
+
+# Individual: :Ak-47 (:Ak-47)
+
+ClassAssertion(:rifle :Ak-47)
+
+# Individual: :Alessandra (:Alessandra)
+
+ClassAssertion(:women :Alessandra)
+
+# Individual: :Bob (:Bob)
+
+ClassAssertion(:normal_soldier :Bob)
+ObjectPropertyAssertion(:uses_gun :Bob :USP)
+
+# Individual: :CRAZYYYYY (:CRAZYYYYY)
+
+ClassAssertion(:crazy_soldier :CRAZYYYYY)
+ObjectPropertyAssertion(:uses_gun :CRAZYYYYY :Ak-47)
+ObjectPropertyAssertion(:uses_gun :CRAZYYYYY :Negev)
+ObjectPropertyAssertion(:uses_gun :CRAZYYYYY :USP)
+
+# Individual: :Fabio_Conservador (:Fabio_Conservador)
+
+ClassAssertion(:conservative_soldier :Fabio_Conservador)
+
+# Individual: :MenWIthoutSpirit (:MenWIthoutSpirit)
+
+ClassAssertion(:men :MenWIthoutSpirit)
+
+# Individual: :MenWithSpirit (:MenWithSpirit)
+
+ClassAssertion(:men :MenWithSpirit)
+ObjectPropertyAssertion(:has_soldier_spirit :MenWithSpirit :SoldierSpirit)
+
+# Individual: :Negev (:Negev)
+
+ClassAssertion(:MachineGun :Negev)
+
+# Individual: :Player_Da_Paz (:Player_Da_Paz)
+
+ClassAssertion(:peaceful_soldier :Player_Da_Paz)
+
+# Individual: :Ronald (:Ronald)
+
+ClassAssertion(:normal_soldier :Ronald)
+
+# Individual: :SoldierSpirit (:SoldierSpirit)
+
+ClassAssertion(:soldier_spirit :SoldierSpirit)
+
+# Individual: :USP (:USP)
+
+ClassAssertion(:pistol :USP)
+
+
+DifferentIndividuals(:Bob :Ronald)
+)
