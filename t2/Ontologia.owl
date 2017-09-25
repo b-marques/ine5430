@@ -34,11 +34,14 @@ Declaration(Class(:spirit))
 Declaration(Class(:tank))
 Declaration(Class(:team))
 Declaration(Class(:terrain))
+Declaration(Class(:terrorist))
 Declaration(Class(:transport_helicopter))
 Declaration(Class(:usmc))
 Declaration(Class(:vehicle))
 Declaration(Class(:woman))
+Declaration(ObjectProperty(:driven_by))
 Declaration(ObjectProperty(:drives))
+Declaration(ObjectProperty(:fights_for))
 Declaration(ObjectProperty(:gun_used_by))
 Declaration(ObjectProperty(:has_soldier_spirit))
 Declaration(ObjectProperty(:kills))
@@ -56,14 +59,26 @@ Declaration(NamedIndividual(:Player_Da_Paz))
 Declaration(NamedIndividual(:Ronald))
 Declaration(NamedIndividual(:SoldierSpirit))
 Declaration(NamedIndividual(:USP))
+Declaration(NamedIndividual(:mec_team))
 ############################
 #   Object Properties
 ############################
+
+# Object Property: :driven_by (:driven_by)
+
+SubObjectPropertyOf(:driven_by owl:topObjectProperty)
+InverseObjectProperties(:driven_by :drives)
 
 # Object Property: :drives (:drives)
 
 ObjectPropertyDomain(:drives :soldier)
 ObjectPropertyRange(:drives :vehicle)
+
+# Object Property: :fights_for (:fights_for)
+
+SubObjectPropertyOf(:fights_for owl:topObjectProperty)
+ObjectPropertyDomain(:fights_for :soldier)
+ObjectPropertyRange(:fights_for :team)
 
 # Object Property: :gun_used_by (:gun_used_by)
 
@@ -140,9 +155,15 @@ DisjointClasses(:crazy_soldier :peaceful_soldier)
 
 SubClassOf(:eu :team)
 
+# Class: :gun (:gun)
+
+
 # Class: :helicotper (:helicotper)
 
 SubClassOf(:helicotper :vehicle)
+
+# Class: :human (:human)
+
 
 # Class: :jet (:jet)
 
@@ -192,9 +213,22 @@ EquivalentClasses(:soldier ObjectIntersectionOf(:man ObjectSomeValuesFrom(:has_s
 
 SubClassOf(:soldier_spirit :spirit)
 
+# Class: :spirit (:spirit)
+
+
 # Class: :tank (:tank)
 
 SubClassOf(:tank :vehicle)
+
+# Class: :team (:team)
+
+
+# Class: :terrain (:terrain)
+
+
+# Class: :terrorist (:terrorist)
+
+EquivalentClasses(:terrorist ObjectIntersectionOf(:soldier ObjectSomeValuesFrom(:fights_for :mec)))
 
 # Class: :transport_helicopter (:transport_helicopter)
 
@@ -203,6 +237,9 @@ SubClassOf(:transport_helicopter :helicotper)
 # Class: :usmc (:usmc)
 
 SubClassOf(:usmc :team)
+
+# Class: :vehicle (:vehicle)
+
 
 # Class: :woman (:woman)
 
@@ -229,6 +266,7 @@ ClassAssertion(:woman :Alessandra)
 
 ClassAssertion(:normal_soldier :Bob)
 ObjectPropertyAssertion(:drives :Bob :APC)
+ObjectPropertyAssertion(:fights_for :Bob :mec_team)
 ObjectPropertyAssertion(:uses_gun :Bob :USP)
 
 # Individual: :CRAZYYYYY (:CRAZYYYYY)
@@ -271,8 +309,13 @@ ClassAssertion(:soldier_spirit :SoldierSpirit)
 
 ClassAssertion(:pistol :USP)
 
+# Individual: :mec_team (:mec_team)
+
+ClassAssertion(:mec :mec_team)
+
 
 DisjointClasses(:apc :boat :car :helicotper :jet :tank)
 DisjointClasses(:china :eu :mec :usmc)
+DisjointClasses(:gun :human :spirit :team :terrain :vehicle)
 DifferentIndividuals(:Bob :Ronald)
 )
