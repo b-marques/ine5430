@@ -9,7 +9,6 @@ Prefix(rdfs:=<http://www.w3.org/2000/01/rdf-schema#>)
 Ontology(<http://www.semanticweb.org/johann/ontologies/2017/8/untitled-ontology-2>
 
 Declaration(Class(:MachineGun))
-Declaration(Class(:anti-Air))
 Declaration(Class(:apc))
 Declaration(Class(:attack_helicopter))
 Declaration(Class(:boat))
@@ -17,24 +16,19 @@ Declaration(Class(:car))
 Declaration(Class(:china))
 Declaration(Class(:conservative_soldier))
 Declaration(Class(:crazy_soldier))
-Declaration(Class(:driver))
 Declaration(Class(:eu))
 Declaration(Class(:gun))
 Declaration(Class(:helicotper))
 Declaration(Class(:human))
-Declaration(Class(:infantry))
 Declaration(Class(:jet))
-Declaration(Class(:map))
+Declaration(Class(:man))
 Declaration(Class(:mec))
-Declaration(Class(:men))
 Declaration(Class(:non_soldier_spirit))
 Declaration(Class(:normal_soldier))
 Declaration(Class(:peaceful_soldier))
-Declaration(Class(:pilot))
 Declaration(Class(:pistol))
 Declaration(Class(:rifle))
 Declaration(Class(:soldier))
-Declaration(Class(:soldier_function))
 Declaration(Class(:soldier_spirit))
 Declaration(Class(:spirit))
 Declaration(Class(:tank))
@@ -43,14 +37,13 @@ Declaration(Class(:terrain))
 Declaration(Class(:transport_helicopter))
 Declaration(Class(:usmc))
 Declaration(Class(:vehicle))
-Declaration(Class(:women))
-Declaration(ObjectProperty(:dont_use_gun))
-Declaration(ObjectProperty(:has_bazuca))
-Declaration(ObjectProperty(:has_knife))
-Declaration(ObjectProperty(:has_pistol))
+Declaration(Class(:woman))
+Declaration(ObjectProperty(:drives))
+Declaration(ObjectProperty(:gun_used_by))
 Declaration(ObjectProperty(:has_soldier_spirit))
 Declaration(ObjectProperty(:kills))
 Declaration(ObjectProperty(:uses_gun))
+Declaration(NamedIndividual(:APC))
 Declaration(NamedIndividual(:Ak-47))
 Declaration(NamedIndividual(:Alessandra))
 Declaration(NamedIndividual(:Bob))
@@ -67,29 +60,33 @@ Declaration(NamedIndividual(:USP))
 #   Object Properties
 ############################
 
-# Object Property: :has_bazuca (:has_bazuca)
+# Object Property: :drives (:drives)
 
-SubObjectPropertyOf(:has_bazuca :uses_gun)
+ObjectPropertyDomain(:drives :soldier)
+ObjectPropertyRange(:drives :vehicle)
 
-# Object Property: :has_knife (:has_knife)
+# Object Property: :gun_used_by (:gun_used_by)
 
-SubObjectPropertyOf(:has_knife :uses_gun)
-
-# Object Property: :has_pistol (:has_pistol)
-
-SubObjectPropertyOf(:has_pistol :uses_gun)
+SubObjectPropertyOf(:gun_used_by owl:topObjectProperty)
+InverseObjectProperties(:gun_used_by :uses_gun)
 
 # Object Property: :has_soldier_spirit (:has_soldier_spirit)
 
 SubObjectPropertyOf(:has_soldier_spirit owl:topObjectProperty)
+ObjectPropertyDomain(:has_soldier_spirit :man)
+ObjectPropertyRange(:has_soldier_spirit :spirit)
 
 # Object Property: :kills (:kills)
 
 SubObjectPropertyOf(:kills owl:topObjectProperty)
+ObjectPropertyDomain(:kills :soldier)
+ObjectPropertyRange(:kills :human)
 
 # Object Property: :uses_gun (:uses_gun)
 
 SubObjectPropertyOf(:uses_gun owl:topObjectProperty)
+ObjectPropertyDomain(:uses_gun :soldier)
+ObjectPropertyRange(:uses_gun :gun)
 
 
 ############################
@@ -109,6 +106,7 @@ SubClassOf(:apc :vehicle)
 # Class: :attack_helicopter (:attack_helicopter)
 
 SubClassOf(:attack_helicopter :helicotper)
+DisjointClasses(:attack_helicopter :transport_helicopter)
 
 # Class: :boat (:boat)
 
@@ -125,7 +123,7 @@ SubClassOf(:china :team)
 # Class: :conservative_soldier (:conservative_soldier)
 
 SubClassOf(:conservative_soldier :soldier)
-SubClassOf(:conservative_soldier ObjectAllValuesFrom(:kills :men))
+SubClassOf(:conservative_soldier ObjectAllValuesFrom(:kills :man))
 DisjointClasses(:conservative_soldier :crazy_soldier)
 DisjointClasses(:conservative_soldier :normal_soldier)
 DisjointClasses(:conservative_soldier :peaceful_soldier)
@@ -138,10 +136,6 @@ SubClassOf(:crazy_soldier ObjectMinCardinality(3 :uses_gun :gun))
 DisjointClasses(:crazy_soldier :normal_soldier)
 DisjointClasses(:crazy_soldier :peaceful_soldier)
 
-# Class: :driver (:driver)
-
-SubClassOf(:driver :soldier_function)
-
 # Class: :eu (:eu)
 
 SubClassOf(:eu :team)
@@ -150,22 +144,18 @@ SubClassOf(:eu :team)
 
 SubClassOf(:helicotper :vehicle)
 
-# Class: :infantry (:infantry)
-
-SubClassOf(:infantry :soldier_function)
-
 # Class: :jet (:jet)
 
 SubClassOf(:jet :vehicle)
 
+# Class: :man (:man)
+
+SubClassOf(:man :human)
+DisjointClasses(:man :woman)
+
 # Class: :mec (:mec)
 
 SubClassOf(:mec :team)
-
-# Class: :men (:men)
-
-SubClassOf(:men :human)
-DisjointClasses(:men :women)
 
 # Class: :non_soldier_spirit (:non_soldier_spirit)
 
@@ -185,10 +175,6 @@ SubClassOf(:peaceful_soldier :soldier)
 SubClassOf(:peaceful_soldier ObjectComplementOf(ObjectSomeValuesFrom(:kills :human)))
 SubClassOf(:peaceful_soldier ObjectComplementOf(ObjectSomeValuesFrom(:uses_gun :gun)))
 
-# Class: :pilot (:pilot)
-
-SubClassOf(:pilot :soldier_function)
-
 # Class: :pistol (:pistol)
 
 SubClassOf(:pistol :gun)
@@ -200,7 +186,7 @@ SubClassOf(:rifle :gun)
 
 # Class: :soldier (:soldier)
 
-EquivalentClasses(:soldier ObjectIntersectionOf(:men ObjectSomeValuesFrom(:has_soldier_spirit :soldier_spirit)))
+EquivalentClasses(:soldier ObjectIntersectionOf(:man ObjectSomeValuesFrom(:has_soldier_spirit :soldier_spirit)))
 
 # Class: :soldier_spirit (:soldier_spirit)
 
@@ -218,14 +204,18 @@ SubClassOf(:transport_helicopter :helicotper)
 
 SubClassOf(:usmc :team)
 
-# Class: :women (:women)
+# Class: :woman (:woman)
 
-SubClassOf(:women :human)
+SubClassOf(:woman :human)
 
 
 ############################
 #   Named Individuals
 ############################
+
+# Individual: :APC (:APC)
+
+ClassAssertion(:apc :APC)
 
 # Individual: :Ak-47 (:Ak-47)
 
@@ -233,11 +223,12 @@ ClassAssertion(:rifle :Ak-47)
 
 # Individual: :Alessandra (:Alessandra)
 
-ClassAssertion(:women :Alessandra)
+ClassAssertion(:woman :Alessandra)
 
 # Individual: :Bob (:Bob)
 
 ClassAssertion(:normal_soldier :Bob)
+ObjectPropertyAssertion(:drives :Bob :APC)
 ObjectPropertyAssertion(:uses_gun :Bob :USP)
 
 # Individual: :CRAZYYYYY (:CRAZYYYYY)
@@ -253,11 +244,11 @@ ClassAssertion(:conservative_soldier :Fabio_Conservador)
 
 # Individual: :MenWIthoutSpirit (:MenWIthoutSpirit)
 
-ClassAssertion(:men :MenWIthoutSpirit)
+ClassAssertion(:man :MenWIthoutSpirit)
 
 # Individual: :MenWithSpirit (:MenWithSpirit)
 
-ClassAssertion(:men :MenWithSpirit)
+ClassAssertion(:man :MenWithSpirit)
 ObjectPropertyAssertion(:has_soldier_spirit :MenWithSpirit :SoldierSpirit)
 
 # Individual: :Negev (:Negev)
@@ -281,5 +272,7 @@ ClassAssertion(:soldier_spirit :SoldierSpirit)
 ClassAssertion(:pistol :USP)
 
 
+DisjointClasses(:apc :boat :car :helicotper :jet :tank)
+DisjointClasses(:china :eu :mec :usmc)
 DifferentIndividuals(:Bob :Ronald)
 )
