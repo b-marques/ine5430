@@ -9,13 +9,13 @@ Prefix(rdfs:=<http://www.w3.org/2000/01/rdf-schema#>)
 Ontology(<http://www.semanticweb.org/johann/ontologies/2017/8/untitled-ontology-2>
 
 Declaration(Class(:M1A2))
-Declaration(Class(:MachineGun))
 Declaration(Class(:T90))
 Declaration(Class(:air))
 Declaration(Class(:ak-101))
 Declaration(Class(:ak-47))
 Declaration(Class(:apc))
 Declaration(Class(:apc_models))
+Declaration(Class(:berettaM9))
 Declaration(Class(:btr90))
 Declaration(Class(:car))
 Declaration(Class(:car_models))
@@ -36,6 +36,7 @@ Declaration(Class(:gun_models))
 Declaration(Class(:heli_models))
 Declaration(Class(:helicotper))
 Declaration(Class(:helix))
+Declaration(Class(:hk21e))
 Declaration(Class(:hmmwv))
 Declaration(Class(:human))
 Declaration(Class(:j10))
@@ -44,10 +45,13 @@ Declaration(Class(:jet_models))
 Declaration(Class(:lav25))
 Declaration(Class(:light_metal))
 Declaration(Class(:m16))
+Declaration(Class(:m249-saw))
+Declaration(Class(:machinegun))
 Declaration(Class(:man))
 Declaration(Class(:mec))
 Declaration(Class(:mi-28))
 Declaration(Class(:mig29))
+Declaration(Class(:mp-444))
 Declaration(Class(:nj2046))
 Declaration(Class(:non_soldier_spirit))
 Declaration(Class(:parts))
@@ -55,8 +59,11 @@ Declaration(Class(:patriot))
 Declaration(Class(:peaceful_soldier))
 Declaration(Class(:pistol))
 Declaration(Class(:places))
+Declaration(Class(:qbb-95))
+Declaration(Class(:qsz-92))
 Declaration(Class(:rifle))
 Declaration(Class(:rolls_royce_engine))
+Declaration(Class(:rpk-74))
 Declaration(Class(:soldier))
 Declaration(Class(:soldier_spirit))
 Declaration(Class(:spirit))
@@ -87,23 +94,20 @@ Declaration(ObjectProperty(:kills))
 Declaration(ObjectProperty(:owned_by))
 Declaration(ObjectProperty(:rides_on))
 Declaration(ObjectProperty(:uses_gun))
-Declaration(NamedIndividual(:APC))
-Declaration(NamedIndividual(:Alessandra))
-Declaration(NamedIndividual(:Bob))
-Declaration(NamedIndividual(:CRAZYYYYY))
 Declaration(NamedIndividual(:China_Jet))
-Declaration(NamedIndividual(:Fabio_Conservador))
 Declaration(NamedIndividual(:LataForte))
 Declaration(NamedIndividual(:LataFraca))
+Declaration(NamedIndividual(:MachineGun_MEC))
 Declaration(NamedIndividual(:Mec_Heli))
 Declaration(NamedIndividual(:MenWIthoutSpirit))
 Declaration(NamedIndividual(:MenWithSpirit))
 Declaration(NamedIndividual(:MotorDeJato))
-Declaration(NamedIndividual(:Negev))
-Declaration(NamedIndividual(:Player_Da_Paz))
-Declaration(NamedIndividual(:Ronald))
+Declaration(NamedIndividual(:Pistola_MEC))
+Declaration(NamedIndividual(:Rifle_MEC))
+Declaration(NamedIndividual(:Soldado_Chines))
+Declaration(NamedIndividual(:Soldado_Crazy_Mec))
+Declaration(NamedIndividual(:Soldado_Peaceful_USMC))
 Declaration(NamedIndividual(:SoldierSpirit))
-Declaration(NamedIndividual(:USP))
 Declaration(NamedIndividual(:asas))
 Declaration(NamedIndividual(:ceu))
 Declaration(NamedIndividual(:china_team))
@@ -111,8 +115,8 @@ Declaration(NamedIndividual(:esteiraDeTanque))
 Declaration(NamedIndividual(:europe_team))
 Declaration(NamedIndividual(:helice))
 Declaration(NamedIndividual(:mec_team))
+Declaration(NamedIndividual(:mi-28))
 Declaration(NamedIndividual(:ocean))
-Declaration(NamedIndividual(:rifle1))
 Declaration(NamedIndividual(:rodas))
 Declaration(NamedIndividual(:sand))
 Declaration(NamedIndividual(:tanque_americano))
@@ -189,12 +193,6 @@ ObjectPropertyRange(:uses_gun :gun)
 EquivalentClasses(:M1A2 ObjectIntersectionOf(:tank ObjectSomeValuesFrom(:owned_by :usmc)))
 SubClassOf(:M1A2 :tank_models)
 
-# Class: :MachineGun (:MachineGun)
-
-SubClassOf(:MachineGun :gun)
-DisjointClasses(:MachineGun :pistol)
-DisjointClasses(:MachineGun :rifle)
-
 # Class: :T90 (:T90)
 
 EquivalentClasses(:T90 ObjectIntersectionOf(:tank ObjectSomeValuesFrom(:owned_by :mec)))
@@ -222,9 +220,14 @@ SubClassOf(:apc :vehicle)
 # Class: :apc_models (:apc_models)
 
 
+# Class: :berettaM9 (:berettaM9)
+
+EquivalentClasses(:berettaM9 ObjectIntersectionOf(:pistol ObjectUnionOf(ObjectSomeValuesFrom(:gun_used_by :european) ObjectSomeValuesFrom(:gun_used_by :patriot))))
+SubClassOf(:berettaM9 :gun_models)
+
 # Class: :btr90 (:btr90)
 
-EquivalentClasses(:btr90 ObjectIntersectionOf(:apc ObjectSomeValuesFrom(:owned_by :mec)))
+EquivalentClasses(:btr90 ObjectIntersectionOf(:apc ObjectUnionOf(ObjectSomeValuesFrom(:driven_by :terrorist) ObjectSomeValuesFrom(:owned_by :mec))))
 SubClassOf(:btr90 :apc_models)
 
 # Class: :car (:car)
@@ -246,7 +249,7 @@ SubClassOf(:china :team)
 
 # Class: :cobra (:cobra)
 
-EquivalentClasses(:cobra ObjectIntersectionOf(:helicotper ObjectUnionOf(ObjectSomeValuesFrom(:owned_by :eu) ObjectSomeValuesFrom(:owned_by :usmc))))
+EquivalentClasses(:cobra ObjectIntersectionOf(:helicotper ObjectUnionOf(ObjectUnionOf(ObjectSomeValuesFrom(:owned_by :eu) ObjectSomeValuesFrom(:owned_by :usmc)) ObjectSomeValuesFrom(:driven_by :european) ObjectSomeValuesFrom(:driven_by :patriot))))
 SubClassOf(:cobra :heli_models)
 
 # Class: :comunist (:comunist)
@@ -272,7 +275,7 @@ SubClassOf(:eu :team)
 
 # Class: :eurofighter (:eurofighter)
 
-EquivalentClasses(:eurofighter ObjectIntersectionOf(:jet ObjectSomeValuesFrom(:owned_by :eu)))
+EquivalentClasses(:eurofighter ObjectIntersectionOf(:jet ObjectUnionOf(ObjectSomeValuesFrom(:driven_by :european) ObjectSomeValuesFrom(:owned_by :eu))))
 SubClassOf(:eurofighter :jet_models)
 
 # Class: :european (:european)
@@ -282,7 +285,7 @@ SubClassOf(:european :soldier)
 
 # Class: :f15 (:f15)
 
-EquivalentClasses(:f15 ObjectIntersectionOf(:jet ObjectSomeValuesFrom(:owned_by :usmc)))
+EquivalentClasses(:f15 ObjectIntersectionOf(:jet ObjectUnionOf(ObjectSomeValuesFrom(:driven_by :patriot) ObjectSomeValuesFrom(:owned_by :usmc))))
 SubClassOf(:f15 :jet_models)
 
 # Class: :famas (:famas)
@@ -312,9 +315,14 @@ SubClassOf(:helicotper :vehicle)
 
 SubClassOf(:helix :parts)
 
+# Class: :hk21e (:hk21e)
+
+EquivalentClasses(:hk21e ObjectIntersectionOf(:machinegun ObjectSomeValuesFrom(:gun_used_by :european)))
+SubClassOf(:hk21e :gun_models)
+
 # Class: :hmmwv (:hmmwv)
 
-EquivalentClasses(:hmmwv ObjectIntersectionOf(:car ObjectUnionOf(ObjectSomeValuesFrom(:owned_by :eu) ObjectSomeValuesFrom(:owned_by :usmc))))
+EquivalentClasses(:hmmwv ObjectIntersectionOf(:car ObjectUnionOf(ObjectSomeValuesFrom(:driven_by :european) ObjectSomeValuesFrom(:driven_by :patriot) ObjectSomeValuesFrom(:owned_by :eu) ObjectSomeValuesFrom(:owned_by :usmc))))
 SubClassOf(:hmmwv :car_models)
 
 # Class: :human (:human)
@@ -322,7 +330,7 @@ SubClassOf(:hmmwv :car_models)
 
 # Class: :j10 (:j10)
 
-EquivalentClasses(:j10 ObjectIntersectionOf(:jet ObjectSomeValuesFrom(:owned_by :china)))
+EquivalentClasses(:j10 ObjectIntersectionOf(:jet ObjectUnionOf(ObjectSomeValuesFrom(:driven_by :comunist) ObjectSomeValuesFrom(:owned_by :china))))
 SubClassOf(:j10 :jet_models)
 
 # Class: :jet (:jet)
@@ -335,7 +343,7 @@ SubClassOf(:jet :vehicle)
 
 # Class: :lav25 (:lav25)
 
-EquivalentClasses(:lav25 ObjectIntersectionOf(:apc ObjectUnionOf(ObjectSomeValuesFrom(:owned_by :eu) ObjectSomeValuesFrom(:owned_by :usmc))))
+EquivalentClasses(:lav25 ObjectIntersectionOf(:apc ObjectUnionOf(ObjectUnionOf(ObjectSomeValuesFrom(:owned_by :eu) ObjectSomeValuesFrom(:owned_by :usmc)) ObjectSomeValuesFrom(:driven_by :european) ObjectSomeValuesFrom(:driven_by :patriot))))
 SubClassOf(:lav25 :apc_models)
 
 # Class: :light_metal (:light_metal)
@@ -346,6 +354,17 @@ SubClassOf(:light_metal :parts)
 
 EquivalentClasses(:m16 ObjectIntersectionOf(:rifle ObjectSomeValuesFrom(:gun_used_by :patriot)))
 SubClassOf(:m16 :gun_models)
+
+# Class: :m249-saw (:m249-saw)
+
+EquivalentClasses(:m249-saw ObjectIntersectionOf(:machinegun ObjectSomeValuesFrom(:gun_used_by :patriot)))
+SubClassOf(:m249-saw :gun_models)
+
+# Class: :machinegun (:machinegun)
+
+SubClassOf(:machinegun :gun)
+DisjointClasses(:machinegun :pistol)
+DisjointClasses(:machinegun :rifle)
 
 # Class: :man (:man)
 
@@ -358,17 +377,22 @@ SubClassOf(:mec :team)
 
 # Class: :mi-28 (:mi-28)
 
-EquivalentClasses(:mi-28 ObjectIntersectionOf(:helicotper ObjectSomeValuesFrom(:owned_by :mec)))
+EquivalentClasses(:mi-28 ObjectIntersectionOf(:helicotper ObjectUnionOf(ObjectSomeValuesFrom(:driven_by :terrorist) ObjectSomeValuesFrom(:owned_by :mec))))
 SubClassOf(:mi-28 :heli_models)
 
 # Class: :mig29 (:mig29)
 
-EquivalentClasses(:mig29 ObjectIntersectionOf(:jet ObjectSomeValuesFrom(:owned_by :mec)))
+EquivalentClasses(:mig29 ObjectIntersectionOf(:jet ObjectUnionOf(ObjectSomeValuesFrom(:driven_by :terrorist) ObjectSomeValuesFrom(:owned_by :mec))))
 SubClassOf(:mig29 :jet_models)
+
+# Class: :mp-444 (:mp-444)
+
+EquivalentClasses(:mp-444 ObjectIntersectionOf(:pistol ObjectSomeValuesFrom(:gun_used_by :terrorist)))
+SubClassOf(:mp-444 :gun_models)
 
 # Class: :nj2046 (:nj2046)
 
-EquivalentClasses(:nj2046 ObjectIntersectionOf(:car ObjectSomeValuesFrom(:owned_by :china)))
+EquivalentClasses(:nj2046 ObjectIntersectionOf(:car ObjectUnionOf(ObjectSomeValuesFrom(:driven_by :comunist) ObjectSomeValuesFrom(:owned_by :china))))
 SubClassOf(:nj2046 :car_models)
 
 # Class: :non_soldier_spirit (:non_soldier_spirit)
@@ -397,6 +421,16 @@ DisjointClasses(:pistol :rifle)
 # Class: :places (:places)
 
 
+# Class: :qbb-95 (:qbb-95)
+
+EquivalentClasses(:qbb-95 ObjectIntersectionOf(:machinegun ObjectSomeValuesFrom(:gun_used_by :comunist)))
+SubClassOf(:qbb-95 :gun_models)
+
+# Class: :qsz-92 (:qsz-92)
+
+EquivalentClasses(:qsz-92 ObjectIntersectionOf(:pistol ObjectSomeValuesFrom(:gun_used_by :comunist)))
+SubClassOf(:qsz-92 :gun_models)
+
 # Class: :rifle (:rifle)
 
 SubClassOf(:rifle :gun)
@@ -404,6 +438,11 @@ SubClassOf(:rifle :gun)
 # Class: :rolls_royce_engine (:rolls_royce_engine)
 
 SubClassOf(:rolls_royce_engine :parts)
+
+# Class: :rpk-74 (:rpk-74)
+
+EquivalentClasses(:rpk-74 ObjectIntersectionOf(:machinegun ObjectSomeValuesFrom(:gun_used_by :terrorist)))
+SubClassOf(:rpk-74 :gun_models)
 
 # Class: :soldier (:soldier)
 
@@ -453,7 +492,7 @@ SubClassOf(:usmc :team)
 
 # Class: :vodnik (:vodnik)
 
-EquivalentClasses(:vodnik ObjectIntersectionOf(:car ObjectSomeValuesFrom(:owned_by :mec)))
+EquivalentClasses(:vodnik ObjectIntersectionOf(:car ObjectUnionOf(ObjectSomeValuesFrom(:driven_by :terrorist) ObjectSomeValuesFrom(:owned_by :mec))))
 SubClassOf(:vodnik :car_models)
 
 # Class: :water (:water)
@@ -474,12 +513,12 @@ SubClassOf(:woman :human)
 
 # Class: :wz-10 (:wz-10)
 
-EquivalentClasses(:wz-10 ObjectIntersectionOf(:helicotper ObjectSomeValuesFrom(:owned_by :china)))
+EquivalentClasses(:wz-10 ObjectIntersectionOf(:helicotper ObjectUnionOf(ObjectSomeValuesFrom(:driven_by :comunist) ObjectSomeValuesFrom(:owned_by :china))))
 SubClassOf(:wz-10 :heli_models)
 
 # Class: :wz551 (:wz551)
 
-EquivalentClasses(:wz551 ObjectIntersectionOf(:apc ObjectSomeValuesFrom(:owned_by :china)))
+EquivalentClasses(:wz551 ObjectIntersectionOf(:apc ObjectUnionOf(ObjectSomeValuesFrom(:driven_by :comunist) ObjectSomeValuesFrom(:owned_by :china))))
 SubClassOf(:wz551 :apc_models)
 
 # Class: :yamaha_engine (:yamaha_engine)
@@ -491,44 +530,12 @@ SubClassOf(:yamaha_engine :parts)
 #   Named Individuals
 ############################
 
-# Individual: :APC (:APC)
-
-ObjectPropertyAssertion(:has_part :APC :LataForte)
-ObjectPropertyAssertion(:has_part :APC :rodas)
-ObjectPropertyAssertion(:rides_on :APC :ocean)
-ObjectPropertyAssertion(:rides_on :APC :sand)
-
-# Individual: :Alessandra (:Alessandra)
-
-
-# Individual: :Bob (:Bob)
-
-ObjectPropertyAssertion(:drives :Bob :APC)
-ObjectPropertyAssertion(:fights_for :Bob :mec_team)
-ObjectPropertyAssertion(:kills :Bob :Ronald)
-ObjectPropertyAssertion(:uses_gun :Bob :USP)
-
-# Individual: :CRAZYYYYY (:CRAZYYYYY)
-
-ObjectPropertyAssertion(:fights_for :CRAZYYYYY :usmc_team)
-ObjectPropertyAssertion(:kills :CRAZYYYYY :Bob)
-ObjectPropertyAssertion(:uses_gun :CRAZYYYYY :Negev)
-ObjectPropertyAssertion(:uses_gun :CRAZYYYYY :USP)
-ObjectPropertyAssertion(:uses_gun :CRAZYYYYY :rifle1)
-
 # Individual: :China_Jet (:China_Jet)
 
 ObjectPropertyAssertion(:has_part :China_Jet :LataForte)
 ObjectPropertyAssertion(:has_part :China_Jet :MotorDeJato)
 ObjectPropertyAssertion(:has_part :China_Jet :asas)
-ObjectPropertyAssertion(:owned_by :China_Jet :china_team)
 ObjectPropertyAssertion(:rides_on :China_Jet :ceu)
-
-# Individual: :Fabio_Conservador (:Fabio_Conservador)
-
-ClassAssertion(ObjectAllValuesFrom(:kills :man) :Fabio_Conservador)
-ClassAssertion(ObjectMaxCardinality(2 :uses_gun :gun) :Fabio_Conservador)
-ObjectPropertyAssertion(:kills :Fabio_Conservador :Bob)
 
 # Individual: :LataForte (:LataForte)
 
@@ -537,6 +544,10 @@ ClassAssertion(:strong_metal :LataForte)
 # Individual: :LataFraca (:LataFraca)
 
 ClassAssertion(:light_metal :LataFraca)
+
+# Individual: :MachineGun_MEC (:MachineGun_MEC)
+
+ClassAssertion(:machinegun :MachineGun_MEC)
 
 # Individual: :Mec_Heli (:Mec_Heli)
 
@@ -558,27 +569,37 @@ ObjectPropertyAssertion(:has_soldier_spirit :MenWithSpirit :SoldierSpirit)
 
 ClassAssertion(:rolls_royce_engine :MotorDeJato)
 
-# Individual: :Negev (:Negev)
+# Individual: :Pistola_MEC (:Pistola_MEC)
 
-ClassAssertion(:MachineGun :Negev)
+ClassAssertion(:pistol :Pistola_MEC)
 
-# Individual: :Player_Da_Paz (:Player_Da_Paz)
+# Individual: :Rifle_MEC (:Rifle_MEC)
 
-ClassAssertion(ObjectComplementOf(ObjectSomeValuesFrom(:kills :human)) :Player_Da_Paz)
-ClassAssertion(ObjectComplementOf(ObjectSomeValuesFrom(:uses_gun :gun)) :Player_Da_Paz)
-ObjectPropertyAssertion(:has_soldier_spirit :Player_Da_Paz :SoldierSpirit)
+ClassAssertion(:rifle :Rifle_MEC)
 
-# Individual: :Ronald (:Ronald)
+# Individual: :Soldado_Chines (:Soldado_Chines)
 
-ObjectPropertyAssertion(:kills :Ronald :Bob)
+ObjectPropertyAssertion(:drives :Soldado_Chines :China_Jet)
+ObjectPropertyAssertion(:fights_for :Soldado_Chines :china_team)
+ObjectPropertyAssertion(:has_soldier_spirit :Soldado_Chines :SoldierSpirit)
+
+# Individual: :Soldado_Crazy_Mec (:Soldado_Crazy_Mec)
+
+ObjectPropertyAssertion(:fights_for :Soldado_Crazy_Mec :mec_team)
+ObjectPropertyAssertion(:kills :Soldado_Crazy_Mec :Soldado_Peaceful_USMC)
+ObjectPropertyAssertion(:uses_gun :Soldado_Crazy_Mec :MachineGun_MEC)
+ObjectPropertyAssertion(:uses_gun :Soldado_Crazy_Mec :Pistola_MEC)
+ObjectPropertyAssertion(:uses_gun :Soldado_Crazy_Mec :Rifle_MEC)
+
+# Individual: :Soldado_Peaceful_USMC (:Soldado_Peaceful_USMC)
+
+ClassAssertion(ObjectComplementOf(ObjectSomeValuesFrom(:kills :human)) :Soldado_Peaceful_USMC)
+ClassAssertion(ObjectComplementOf(ObjectSomeValuesFrom(:uses_gun :gun)) :Soldado_Peaceful_USMC)
+ObjectPropertyAssertion(:has_soldier_spirit :Soldado_Peaceful_USMC :SoldierSpirit)
 
 # Individual: :SoldierSpirit (:SoldierSpirit)
 
 ClassAssertion(:soldier_spirit :SoldierSpirit)
-
-# Individual: :USP (:USP)
-
-ClassAssertion(:pistol :USP)
 
 # Individual: :asas (:asas)
 
@@ -608,13 +629,15 @@ ClassAssertion(:helix :helice)
 
 ClassAssertion(:mec :mec_team)
 
+# Individual: :mi-28 (:mi-28)
+
+ObjectPropertyAssertion(:has_part :mi-28 :LataForte)
+ObjectPropertyAssertion(:has_part :mi-28 :helice)
+ObjectPropertyAssertion(:rides_on :mi-28 :ceu)
+
 # Individual: :ocean (:ocean)
 
 ClassAssertion(:water :ocean)
-
-# Individual: :rifle1 (:rifle1)
-
-ClassAssertion(:rifle :rifle1)
 
 # Individual: :rodas (:rodas)
 
@@ -638,6 +661,7 @@ ClassAssertion(:usmc :usmc_team)
 
 DisjointClasses(:M1A2 :T90 :challenger2 :type98)
 DisjointClasses(:air :ground :water)
+DisjointClasses(:ak-101 :ak-47 :berettaM9 :famas :hk21e :m16 :m249-saw :mp-444 :qbb-95 :qsz-92 :rpk-74)
 DisjointClasses(:apc_models :car_models :gun_models :heli_models :human :jet_models :parts :places :spirit :tank_models :team)
 DisjointClasses(:btr90 :lav25 :wz551)
 DisjointClasses(:china :eu :mec :usmc)
@@ -648,9 +672,5 @@ DisjointClasses(:eurofighter :f15 :j10 :mig29)
 DisjointClasses(:gun :human :parts :places :spirit :team :vehicle)
 DisjointClasses(:helix :light_metal :rolls_royce_engine :strong_metal :track :wheels :wings :yamaha_engine)
 DisjointClasses(:hmmwv :nj2046 :vodnik)
-DifferentIndividuals(:APC :Alessandra :Bob :CRAZYYYYY :China_Jet :Fabio_Conservador :LataForte :LataFraca :Mec_Heli :MenWIthoutSpirit :MenWithSpirit :MotorDeJato :Negev :Player_Da_Paz :asas :ceu :china_team :esteiraDeTanque :europe_team :helice :mec_team :ocean :rifle1)
-DifferentIndividuals(:Fabio_Conservador :LataForte :LataFraca :MenWIthoutSpirit :MenWithSpirit :Negev :Player_Da_Paz :Ronald :SoldierSpirit :USP :europe_team :mec_team :ocean :rodas :sand :usmc_team)
-DifferentIndividuals(:Ronald :SoldierSpirit :USP :rifle1 :rodas :sand :tanque_americano :usmc_team)
-DifferentIndividuals(:Ronald :SoldierSpirit :USP :rodas :sand)
 DifferentIndividuals(:ocean :sand)
 )
