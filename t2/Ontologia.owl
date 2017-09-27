@@ -83,7 +83,6 @@ Declaration(Class(:wings))
 Declaration(Class(:woman))
 Declaration(Class(:wz-10))
 Declaration(Class(:wz551))
-Declaration(Class(:yamaha_engine))
 Declaration(ObjectProperty(:driven_by))
 Declaration(ObjectProperty(:drives))
 Declaration(ObjectProperty(:fights_for))
@@ -94,7 +93,9 @@ Declaration(ObjectProperty(:kills))
 Declaration(ObjectProperty(:owned_by))
 Declaration(ObjectProperty(:rides_on))
 Declaration(ObjectProperty(:uses_gun))
+Declaration(NamedIndividual(:APC_Europeu))
 Declaration(NamedIndividual(:China_Jet))
+Declaration(NamedIndividual(:Jato_Americano))
 Declaration(NamedIndividual(:LataForte))
 Declaration(NamedIndividual(:LataFraca))
 Declaration(NamedIndividual(:MachineGun_MEC))
@@ -104,10 +105,13 @@ Declaration(NamedIndividual(:MenWithSpirit))
 Declaration(NamedIndividual(:MotorDeJato))
 Declaration(NamedIndividual(:Pistola_MEC))
 Declaration(NamedIndividual(:Rifle_MEC))
+Declaration(NamedIndividual(:Rifle_americano))
+Declaration(NamedIndividual(:Soldado_Americano))
 Declaration(NamedIndividual(:Soldado_Chines))
 Declaration(NamedIndividual(:Soldado_Crazy_Mec))
 Declaration(NamedIndividual(:Soldado_Peaceful_USMC))
 Declaration(NamedIndividual(:SoldierSpirit))
+Declaration(NamedIndividual(:areia))
 Declaration(NamedIndividual(:asas))
 Declaration(NamedIndividual(:ceu))
 Declaration(NamedIndividual(:china_team))
@@ -118,7 +122,6 @@ Declaration(NamedIndividual(:mec_team))
 Declaration(NamedIndividual(:mi-28))
 Declaration(NamedIndividual(:ocean))
 Declaration(NamedIndividual(:rodas))
-Declaration(NamedIndividual(:sand))
 Declaration(NamedIndividual(:tanque_americano))
 Declaration(NamedIndividual(:usmc_team))
 ############################
@@ -521,14 +524,18 @@ SubClassOf(:wz-10 :heli_models)
 EquivalentClasses(:wz551 ObjectIntersectionOf(:apc ObjectUnionOf(ObjectSomeValuesFrom(:driven_by :comunist) ObjectSomeValuesFrom(:owned_by :china))))
 SubClassOf(:wz551 :apc_models)
 
-# Class: :yamaha_engine (:yamaha_engine)
-
-SubClassOf(:yamaha_engine :parts)
-
 
 ############################
 #   Named Individuals
 ############################
+
+# Individual: :APC_Europeu (:APC_Europeu)
+
+ObjectPropertyAssertion(:has_part :APC_Europeu :LataForte)
+ObjectPropertyAssertion(:has_part :APC_Europeu :rodas)
+ObjectPropertyAssertion(:owned_by :APC_Europeu :europe_team)
+ObjectPropertyAssertion(:rides_on :APC_Europeu :areia)
+ObjectPropertyAssertion(:rides_on :APC_Europeu :ocean)
 
 # Individual: :China_Jet (:China_Jet)
 
@@ -536,6 +543,13 @@ ObjectPropertyAssertion(:has_part :China_Jet :LataForte)
 ObjectPropertyAssertion(:has_part :China_Jet :MotorDeJato)
 ObjectPropertyAssertion(:has_part :China_Jet :asas)
 ObjectPropertyAssertion(:rides_on :China_Jet :ceu)
+
+# Individual: :Jato_Americano (:Jato_Americano)
+
+ObjectPropertyAssertion(:has_part :Jato_Americano :LataForte)
+ObjectPropertyAssertion(:has_part :Jato_Americano :MotorDeJato)
+ObjectPropertyAssertion(:has_part :Jato_Americano :asas)
+ObjectPropertyAssertion(:rides_on :Jato_Americano :ceu)
 
 # Individual: :LataForte (:LataForte)
 
@@ -577,6 +591,16 @@ ClassAssertion(:pistol :Pistola_MEC)
 
 ClassAssertion(:rifle :Rifle_MEC)
 
+# Individual: :Rifle_americano (:Rifle_americano)
+
+ClassAssertion(:rifle :Rifle_americano)
+ObjectPropertyAssertion(:gun_used_by :Rifle_americano :Soldado_Americano)
+
+# Individual: :Soldado_Americano (:Soldado_Americano)
+
+ObjectPropertyAssertion(:drives :Soldado_Americano :Jato_Americano)
+ObjectPropertyAssertion(:fights_for :Soldado_Americano :usmc_team)
+
 # Individual: :Soldado_Chines (:Soldado_Chines)
 
 ObjectPropertyAssertion(:drives :Soldado_Chines :China_Jet)
@@ -600,6 +624,10 @@ ObjectPropertyAssertion(:has_soldier_spirit :Soldado_Peaceful_USMC :SoldierSpiri
 # Individual: :SoldierSpirit (:SoldierSpirit)
 
 ClassAssertion(:soldier_spirit :SoldierSpirit)
+
+# Individual: :areia (:areia)
+
+ClassAssertion(:ground :areia)
 
 # Individual: :asas (:asas)
 
@@ -633,6 +661,7 @@ ClassAssertion(:mec :mec_team)
 
 ObjectPropertyAssertion(:has_part :mi-28 :LataForte)
 ObjectPropertyAssertion(:has_part :mi-28 :helice)
+ObjectPropertyAssertion(:owned_by :mi-28 :mec_team)
 ObjectPropertyAssertion(:rides_on :mi-28 :ceu)
 
 # Individual: :ocean (:ocean)
@@ -643,16 +672,12 @@ ClassAssertion(:water :ocean)
 
 ClassAssertion(:wheels :rodas)
 
-# Individual: :sand (:sand)
-
-ClassAssertion(:ground :sand)
-
 # Individual: :tanque_americano (:tanque_americano)
 
 ObjectPropertyAssertion(:has_part :tanque_americano :LataForte)
 ObjectPropertyAssertion(:has_part :tanque_americano :esteiraDeTanque)
 ObjectPropertyAssertion(:owned_by :tanque_americano :usmc_team)
-ObjectPropertyAssertion(:rides_on :tanque_americano :sand)
+ObjectPropertyAssertion(:rides_on :tanque_americano :areia)
 
 # Individual: :usmc_team (:usmc_team)
 
@@ -670,7 +695,7 @@ DisjointClasses(:comunist :european :patriot :terrorist)
 DisjointClasses(:conservative_soldier :crazy_soldier :peaceful_soldier)
 DisjointClasses(:eurofighter :f15 :j10 :mig29)
 DisjointClasses(:gun :human :parts :places :spirit :team :vehicle)
-DisjointClasses(:helix :light_metal :rolls_royce_engine :strong_metal :track :wheels :wings :yamaha_engine)
 DisjointClasses(:hmmwv :nj2046 :vodnik)
-DifferentIndividuals(:ocean :sand)
+DifferentIndividuals(:China_Jet :LataForte :LataFraca :MachineGun_MEC :Mec_Heli :MenWIthoutSpirit :MenWithSpirit :MotorDeJato :Pistola_MEC :Rifle_MEC :Soldado_Chines :Soldado_Crazy_Mec :Soldado_Peaceful_USMC :SoldierSpirit :areia :asas :ceu :china_team :esteiraDeTanque :europe_team :helice :mec_team :mi-28 :ocean :rodas :tanque_americano :usmc_team)
+DifferentIndividuals(:areia :ocean)
 )
