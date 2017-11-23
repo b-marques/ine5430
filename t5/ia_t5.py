@@ -85,3 +85,5 @@ print(metrics.classification_report(target_test, target_predicted))
 
 score = metrics.accuracy_score(target_test, target_predicted)
 print("Validation accuracy: {:.2%}".format(score))
+
+print(metrics.confusion_matrix(target_test, target_predicted))
