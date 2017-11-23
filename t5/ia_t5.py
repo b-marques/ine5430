@@ -78,6 +78,7 @@ network.architecture()
 network.train(data_train, target_train, data_test, target_test, epochs=1000)
 
 plots.error_plot(network)
+plots.layer_structure(network)
 
 target_predicted = network.predict(data_test).argmax(axis=1)
 target_test = np.asarray(target_test.argmax(axis=1)).reshape(len(target_test))
