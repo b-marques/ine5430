@@ -1,4 +1,5 @@
 from matplotlib.pyplot import plot
+
 import numpy as np
 
 from neupy import environment, algorithms, layers, plots
@@ -13,35 +14,38 @@ theano.config.floatX = 'float32'
 
 digitos = np.loadtxt('exdata.csv', delimiter=',')
 
+# PREPARAÇÃO DOS DADOS : -------------------------------------------------------
 # Remove o valor que representa a classifição do digito, ou seja, remove a
 # última linha da matriz de dados lida. O ".T" é responsável por transpor a
 # matriz de dados
 data = digitos[:-1].T
 
-# Extrai as classificações dos dígitos representados no arquivo de dados.
+# Extrai as classificações(alvos) dos dígitos representados no arquivo de dados.
 target = digitos[-1]
 
-# Procurar pelos valores de classificação igual a 10 e mapeá-los para 0.
+# Procurar pelos valores de classificação(alvo) igual a 10 e os mapeia para 0.
 target[target == 10] = 0
 
-# Normalização dos dados será realizada utilizando o StandartScaler do 
+# Normalização dos dados será realizada utilizando o MinMaxScaler do 
 # scikit-learn, que é uma API de análise de dados em python.
-# Será utlizado o método "fit_transform" da classe StandartScaler, para
-# realizar a normalização, que utiliza o cálculo da média e do desvio padrão.
-# Para mais informações:
-# http://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html
+# Será utlizado o método "fit_transform" da classe MinMaxScaler para realizar a
+# normalização. Esse método de normalização mapeia os dados para um intervalo
+# definido pelo usuário, e possui o intervalo de 0 a 1 como padrão.
+# http://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.MinMaxScaler.html
 min_max_scaler = MinMaxScaler()
-# standart_scaler = StandardScaler()
-# scaler = StandardScaler()
 data = min_max_scaler.fit_transform(data)
-# dados_normalizados2 = standart_scaler.fit_transform(dados)
 
 target_scaler = OneHotEncoder()
+print(target)
 target = target_scaler.fit_transform(target.reshape((-1, 1)))
+print(target)
 target = target.todense()
 
+
+# CONFIGURAÇÕES DE AMBIENTE: ---------------------------------------------------
 environment.reproducible()
 
+# SEPARAÇÃO DE DADOS PARA TREINO E TESTE:
 data_train, data_test, target_train, target_test = train_test_split(
     data,
     target,
@@ -49,6 +53,7 @@ data_train, data_test, target_train, target_test = train_test_split(
     test_size=(1. / 7)
 )
 
+# CRIAÇÃO DA REDE NEURAL:
 network = algorithms.Momentum(
     [
         layers.Input(400),
@@ -66,7 +71,7 @@ network = algorithms.Momentum(
 
 network.architecture()
 
-network.train(data_train, target_train, data_test, target_test, epochs=20)
+network.train(data_train, target_train, data_test, target_test, epochs=1)
 
 plots.error_plot(network)
 
