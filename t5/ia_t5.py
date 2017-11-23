@@ -3,6 +3,7 @@ from matplotlib.pyplot import plot
 import numpy as np
 
 from neupy import environment, algorithms, layers, plots
+from neupy.exceptions import StopTraining 
 
 from sklearn import metrics
 from sklearn.model_selection import train_test_split
@@ -36,9 +37,7 @@ min_max_scaler = MinMaxScaler()
 data = min_max_scaler.fit_transform(data)
 
 target_scaler = OneHotEncoder()
-print(target)
 target = target_scaler.fit_transform(target.reshape((-1, 1)))
-print(target)
 target = target.todense()
 
 
@@ -53,11 +52,15 @@ data_train, data_test, target_train, target_test = train_test_split(
     test_size=(1. / 7)
 )
 
+def on_epoch_end(network):
+    if network.errors.last() < 0.001:
+        raise StopTraining("Train error reached '0.001'.")
+
 # CRIAÇÃO DA REDE NEURAL:
 network = algorithms.Momentum(
     [
         layers.Input(400),
-        layers.Relu(32),
+        layers.Relu(200),
         layers.Relu(300),
         layers.Softmax(10),
     ],
@@ -67,11 +70,12 @@ network = algorithms.Momentum(
     shuffle_data=True,
     momentum=0.99,
     nesterov=True,
+    epoch_end_signal=on_epoch_end,
 )
 
 network.architecture()
 
-network.train(data_train, target_train, data_test, target_test, epochs=1)
+network.train(data_train, target_train, data_test, target_test, epochs=1000)
 
 plots.error_plot(network)
 
